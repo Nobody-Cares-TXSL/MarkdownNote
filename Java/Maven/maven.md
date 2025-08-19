@@ -107,3 +107,47 @@ Maven有三种生命周期：
 [![pV39V5d.jpg](https://s21.ax1x.com/2025/07/17/pV39V5d.jpg)](https://imgse.com/i/pV39V5d)  
 ### 断言
 [![pV39ePA.jpg](https://s21.ax1x.com/2025/07/17/pV39ePA.jpg)](https://imgse.com/i/pV39ePA)
+
+## 继承
++ 子工程继承父工程的依赖
+
+```maven
+<!-- 继承父工程 -->
+<parent>
+    <groupId></groupId>
+    <artifactId></artifactId>
+    <version></version>
+    <relativePath/> <!-- lookup parent from repository -->
+    <relativePath>指定父工程的pom.xml文件路径</relativePath>
+</parent>
+
+<!-- 定义打包类型 -->
+<!-- jar默认打包 war普通web打包 pom聚合工程,仅进行依赖管理 -->
+<packaging></packaging>
+
+<!-- 属性配置 -->
+<properties>
+    <lombok.version>1.18.28</lombok.version>
+</properties>
+<!-- 引入属性 -->
+<version>${lombok.version}</version>
+
+<!-- 依赖管理 -->
+<!-- 父工程进行统一依赖管理, 子工程不用指定版本号,但还是需要指定依赖的坐标 -->
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+```
+## 聚合
++ 聚合工程：不具有业务功能(有且仅有一个pom文件)
+```maven
+<modules>
+    <module>maven-project01</module>
+    <module>maven-project02</module>
+</modules>
+```
