@@ -17,8 +17,8 @@ sky:
     
 alioss:
   endpoint: oss-cn-beijing.aliyuncs.com
-  access-key-id: LTAI5tAqA53GjUDkFr9Xvbw7
-  access-key-secret: oidNWOBD7phvHo6FyRqSHfRLSI7Are
+  access-key-id: your-access-key-id  # 实际使用时替换为真实值，不要提交到版本控制系统
+  access-key-secret: your-access-key-secret  # 实际使用时替换为真实值，不要提交到版本控制系统
   bucket-name: java-nobodycares
 ```
 
