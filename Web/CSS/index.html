@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS核心布局知识体系</title>
+</head>
+<body style="margin: 0; padding: 20px; font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.5;">
+    <div style="max-width: 1200px; margin: 0 auto; display: grid; gap: 20px;">
+        <!-- 标题层 -->
+        <div style="background-color: #e6f7ff; padding: 15px; border: 1px solid #91d5ff; border-radius: 6px;">
+            <h1 style="margin: 0; color: #1890ff; text-align: center;">CSS尺寸、盒子模型、定位、浮动与布局体系</h1>
+        </div>
+
+        <!-- 尺寸单位层 -->
+        <div style="background-color: #fff7e6; padding: 15px; border: 1px solid #ffe6b3; border-radius: 6px;">
+            <h2 style="margin: 0 0 15px 0; color: #fa8c16;">尺寸单位</h2>
+            <div style="display: flex; gap: 15px; background-color: rgba(255,255,255,0.8); padding: 15px; border-radius: 4px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 200px; border: 1px solid #ffe6b3; padding: 15px; border-radius: 4px;">
+                    <strong style="color: #fa8c16; font-size: 18px;">px (像素)</strong>
+                    <p style="margin: 10px 0 0 0;">相对固定的单位，代表屏幕上的一个物理点。在高分辨率屏幕上，1个CSS像素可能对应多个物理像素。</p>
+                </div>
+                <div style="flex: 1; min-width: 200px; border: 1px solid #ffe6b3; padding: 15px; border-radius: 4px;">
+                    <strong style="color: #fa8c16; font-size: 18px;">em</strong>
+                    <p style="margin: 10px 0 0 0;">相对单位，相对于父元素的字体大小。如果父元素字体大小为16px，则1em = 16px。</p>
+                </div>
+                <div style="flex: 1; min-width: 200px; border: 1px solid #ffe6b3; padding: 15px; border-radius: 4px;">
+                    <strong style="color: #fa8c16; font-size: 18px;">rem (root em)</strong>
+                    <p style="margin: 10px 0 0 0;">相对单位，相对于根元素(html)的字体大小。如果html的字体大小为16px，则1rem = 16px。</p>
+                </div>
+                <div style="flex: 1; min-width: 200px; border: 1px solid #ffe6b3; padding: 15px; border-radius: 4px;">
+                    <strong style="color: #fa8c16; font-size: 18px;">fr (fraction unit)</strong>
+                    <p style="margin: 10px 0 0 0;">Grid布局专用单位，表示网格容器中可用空间的比例份额。当多个元素使用fr单位时，它们会按照比例分配剩余空间。</p>
+                </div>
+            </div>
+            <div style="margin-top: 10px; padding: 10px; background-color: rgba(255,255,255,0.6); border-radius: 4px; border-left: 3px solid #fa8c16;">
+                <strong>使用原则：</strong>
+                <ul style="margin: 5px 0 0 0; padding-left: 20px;">
+                    <li>组合使用原则："全局用 rem，局部用 em，细节用 px"</li>
+                    <li>若尺寸不依赖任何字体大小（如边框）→ 用 px</li>
+                    <li>若尺寸仅依赖父元素/自身字体大小（如按钮内边距）→ 用 em</li>
+                    <li>若尺寸需要全局统一缩放（如页面字体、容器宽度）→ 用 rem</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 盒子模型层 -->
+        <div style="background-color: #f6ffed; padding: 15px; border: 1px solid #b7eb8f; border-radius: 6px;">
+            <h2 style="margin: 0 0 15px 0; color: #52c41a;">盒子模型</h2>
+            <p style="margin: 0 0 10px 0;">盒子模型由4个部分从内到外依次组成：<strong>内容区（content）、内边距（padding）、边框（border）、外边距（margin）</strong></p>
+            <div style="display: flex; gap: 15px; background-color: rgba(255,255,255,0.8); padding: 15px; border-radius: 4px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 150px; border: 1px solid #b7eb8f; padding: 15px; border-radius: 4px; text-align: center;">
+                    <strong style="color: #52c41a;">content-box</strong>
+                    <p style="margin: 10px 0 0 0; font-size: 14px;">标准盒模型 (W3C)<br>width/height仅包含内容宽度</p>
+                </div>
+                <div style="flex: 1; min-width: 150px; border: 1px solid #b7eb8f; padding: 15px; border-radius: 4px; text-align: center;">
+                    <strong style="color: #52c41a;">border-box</strong>
+                    <p style="margin: 10px 0 0 0; font-size: 14px;">怪异盒模型 (IE)<br>width/height包含内容+内边距+边框</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- position定位层 -->
+        <div style="background-color: #fff0f0; padding: 15px; border: 1px solid #ffccc7; border-radius: 6px;">
+            <h2 style="margin: 0 0 15px 0; color: #f5222d;">position 定位</h2>
+            <div style="margin-bottom: 15px; padding: 10px; background-color: rgba(255,255,255,0.6); border-radius: 4px;">
+                <strong>关键术语：</strong>
+                <ul style="margin: 5px 0 0 0; padding-left: 20px;">
+                    <li><strong>定位祖先元素</strong>：元素的祖先节点中，position属性值不为static的最近元素</li>
+                    <li><strong>包含块</strong>：元素布局和定位的参考框，因定位类型不同而变化</li>
+                </ul>
+            </div>
+            <div style="display: flex; gap: 15px; background-color: rgba(255,255,255,0.8); padding: 15px; border-radius: 4px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 180px; border: 1px solid #ffccc7; padding: 15px; border-radius: 4px;">
+                    <strong style="color: #f5222d;">static</strong>
+                    <p style="margin: 10px 0 0 0; font-size: 14px;">静态定位（默认值）<br>遵循常规流布局，不参与定位<br>top/right/bottom/left不生效</p>
+                </div>
+                <div style="flex: 1; min-width: 180px; border: 1px solid #ffccc7; padding: 15px; border-radius: 4px;">
+                    <strong style="color: #f5222d;">relative</strong>
+                    <p style="margin: 10px 0 0 0; font-size: 14px;">相对定位<br>相对于自身正常位置偏移<br>不脱离文档流，保留原位置</p>
+                </div>
+                <div style="flex: 1; min-width: 180px; border: 1px solid #ffccc7; padding: 15px; border-radius: 4px;">
+                    <strong style="color: #f5222d;">absolute</strong>
+                    <p style="margin: 10px 0 0 0; font-size: 14px;">绝对定位<br>相对于定位祖先元素偏移<br>完全脱离文档流，不保留位置</p>
+                </div>
+                <div style="flex: 1; min-width: 180px; border: 1px solid #ffccc7; padding: 15px; border-radius: 4px;">
+                    <strong style="color: #f5222d;">fixed</strong>
+                    <p style="margin: 10px 0 0 0; font-size: 14px;">固定定位<br>相对于视口(viewport)偏移<br>完全脱离文档流，不随滚动移动</p>
+                </div>
+                <div style="flex: 1; min-width: 180px; border: 1px solid #ffccc7; padding: 15px; border-radius: 4px;">
+                    <strong style="color: #f5222d;">sticky</strong>
+                    <p style="margin: 10px 0 0 0; font-size: 14px;">粘性定位<br>结合relative和fixed特点<br>根据滚动位置动态切换行为</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- float浮动层 -->
+        <div style="background-color: #f0f2ff; padding: 15px; border: 1px solid #adc6ff; border-radius: 6px;">
+            <h2 style="margin: 0 0 15px 0; color: #1890ff;">float 浮动</h2>
+            <p style="margin: 0 0 10px 0;"><strong>特性：</strong>浮动元素会部分脱离文档流，不占据正常文档流的垂直空间，但仍会在水平方向上影响周围元素的排列。</p>
+            <div style="display: flex; gap: 15px; background-color: rgba(255,255,255,0.8); padding: 15px; border-radius: 4px; flex-wrap: wrap; margin-bottom: 15px;">
+                <div style="flex: 1; min-width: 150px; border: 1px solid #adc6ff; padding: 15px; border-radius: 4px; text-align: center;">
+                    <strong>left</strong>
+                    <p style="margin: 10px 0 0 0; font-size: 14px;">元素向左浮动</p>
+                </div>
+                <div style="flex: 1; min-width: 150px; border: 1px solid #adc6ff; padding: 15px; border-radius: 4px; text-align: center;">
+                    <strong>right</strong>
+                    <p style="margin: 10px 0 0 0; font-size: 14px;">元素向右浮动</p>
+                </div>
+                <div style="flex: 1; min-width: 150px; border: 1px solid #adc6ff; padding: 15px; border-radius: 4px; text-align: center;">
+                    <strong>none</strong>
+                    <p style="margin: 10px 0 0 0; font-size: 14px;">不浮动（默认值）</p>
+                </div>
+                <div style="flex: 1; min-width: 150px; border: 1px solid #adc6ff; padding: 15px; border-radius: 4px; text-align: center;">
+                    <strong>inherit</strong>
+                    <p style="margin: 10px 0 0 0; font-size: 14px;">继承父元素float值</p>
+                </div>
+            </div>
+            
+            <h3 style="margin: 0 0 10px 0; color: #1890ff;">清除浮动</h3>
+            <div style="display: flex; gap: 15px; background-color: rgba(255,255,255,0.8); padding: 15px; border-radius: 4px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 120px; border: 1px solid #adc6ff; padding: 15px; border-radius: 4px; text-align: center;">
+                    <strong>clear: left</strong>
+                    <p style="margin: 10px 0 0 0; font-size: 14px;">左侧不允许有浮动元素</p>
+                </div>
+                <div style="flex: 1; min-width: 120px; border: 1px solid #adc6ff; padding: 15px; border-radius: 4px; text-align: center;">
+                    <strong>clear: right</strong>
+                    <p style="margin: 10px 0 0 0; font-size: 14px;">右侧不允许有浮动元素</p>
+                </div>
+                <div style="flex: 1; min-width: 120px; border: 1px solid #adc6ff; padding: 15px; border-radius: 4px; text-align: center;">
+                    <strong>clear: both</strong>
+                    <p style="margin: 10px 0 0 0; font-size: 14px;">左右两侧均不允许有浮动元素</p>
+                </div>
+                <div style="flex: 1; min-width: 120px; border: 1px solid #adc6ff; padding: 15px; border-radius: 4px; text-align: center;">
+                    <strong>clear: none</strong>
+                    <p style="margin: 10px 0 0 0; font-size: 14px;">允许有浮动元素（默认值）</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 布局模型层 -->
+        <div style="background-color: #f9f0ff; padding: 15px; border: 1px solid #d9b3ff; border-radius: 6px;">
+            <h2 style="margin: 0 0 20px 0; color: #722ed1;">布局模型</h2>
+            
+            <!-- Flex布局 -->
+            <div style="margin-bottom: 20px;">
+                <h3 style="margin: 0 0 15px 0; color: #722ed1; border-left: 4px solid #722ed1; padding-left: 10px;">Flex布局</h3>
+                <p style="margin: 0 0 10px 0;"><strong>基础概念：</strong>通过设置display: flex;使元素成为Flex容器，其子元素自动成为Flex项目，沿主轴排列。</p>
+                
+                <h4 style="margin: 15px 0 10px 0; color: #722ed1;">容器属性</h4>
+                <div style="display: flex; gap: 10px; background-color: rgba(255,255,255,0.8); padding: 15px; border-radius: 4px; flex-wrap: wrap; margin-bottom: 15px;">
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>flex-direction</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">决定主轴方向：row | row-reverse | column | column-reverse</p>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>flex-wrap</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">控制换行：nowrap | wrap | wrap-reverse</p>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>flex-flow</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">flex-direction + flex-wrap的简写</p>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>justify-content</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">主轴对齐：flex-start | flex-end | center | space-between | space-around | space-evenly</p>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>align-items</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">交叉轴对齐：flex-start | flex-end | center | baseline | stretch</p>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>align-content</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">多轴线对齐：同上（单轴线不生效）</p>
+                    </div>
+                </div>
+                
+                <h4 style="margin: 15px 0 10px 0; color: #722ed1;">项目属性</h4>
+                <div style="display: flex; gap: 10px; background-color: rgba(255,255,255,0.8); padding: 15px; border-radius: 4px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 150px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>order</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">定义排列顺序，数值越小越靠前</p>
+                    </div>
+                    <div style="flex: 1; min-width: 150px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>flex-grow</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">放大比例，默认为0（不放大）</p>
+                    </div>
+                    <div style="flex: 1; min-width: 150px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>flex-shrink</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">缩小比例，默认为1（空间不足时缩小）</p>
+                    </div>
+                    <div style="flex: 1; min-width: 150px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>flex-basis</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">项目占据的主轴空间，默认为auto</p>
+                    </div>
+                    <div style="flex: 1; min-width: 150px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>flex</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">flex-grow + flex-shrink + flex-basis的简写</p>
+                    </div>
+                    <div style="flex: 1; min-width: 150px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>align-self</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">单个项目的交叉轴对齐方式</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Grid布局 -->
+            <div>
+                <h3 style="margin: 0 0 15px 0; color: #722ed1; border-left: 4px solid #722ed1; padding-left: 10px;">Grid布局</h3>
+                <p style="margin: 0 0 10px 0;"><strong>基础概念：</strong>通过设置display: grid;使元素成为Grid容器，采用二维网格布局系统，可同时处理行和列。</p>
+                
+                <h4 style="margin: 15px 0 10px 0; color: #722ed1;">核心函数与关键字</h4>
+                <div style="display: flex; gap: 10px; background-color: rgba(255,255,255,0.8); padding: 15px; border-radius: 4px; flex-wrap: wrap; margin-bottom: 15px;">
+                    <div style="flex: 1; min-width: 150px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>repeat()</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">重复指定的网格轨道模式</p>
+                    </div>
+                    <div style="flex: 1; min-width: 150px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>minmax()</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">定义尺寸范围，自适应调整</p>
+                    </div>
+                    <div style="flex: 1; min-width: 150px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>auto</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">根据内容自动调整大小</p>
+                    </div>
+                    <div style="flex: 1; min-width: 150px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>auto-fill</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">尽可能多创建指定尺寸轨道</p>
+                    </div>
+                    <div style="flex: 1; min-width: 150px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>auto-fit</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">类似auto-fill，但折叠空轨道</p>
+                    </div>
+                </div>
+                
+                <h4 style="margin: 15px 0 10px 0; color: #722ed1;">容器属性</h4>
+                <div style="display: flex; gap: 10px; background-color: rgba(255,255,255,0.8); padding: 15px; border-radius: 4px; flex-wrap: wrap; margin-bottom: 15px;">
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>grid-template-columns/rows</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">定义列宽和行高</p>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>grid-template-areas</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">定义网格布局区域</p>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>row-gap/column-gap</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">设置行间距和列间距</p>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>grid-auto-flow</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">决定网格排列顺序：row | column</p>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>justify-items/align-items</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">控制所有项目在单元格内的对齐</p>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>justify-content/align-content</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">控制整个网格区域在容器中的对齐</p>
+                    </div>
+                </div>
+                
+                <h4 style="margin: 15px 0 10px 0; color: #722ed1;">项目属性</h4>
+                <div style="display: flex; gap: 10px; background-color: rgba(255,255,255,0.8); padding: 15px; border-radius: 4px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>grid-column-start/end</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">定义项目在列方向的起始和结束网格线</p>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>grid-row-start/end</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">定义项目在行方向的起始和结束网格线</p>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>grid-column/grid-row</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">上述属性的简写形式，可使用span关键字</p>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>justify-self/align-self</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">控制单个项目在其单元格内的对齐</p>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>grid-area</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">将项目分配给命名的网格区域</p>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; border: 1px solid #d9b3ff; padding: 10px; border-radius: 4px;">
+                        <strong>z-index</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 14px;">指定网格项目的重叠顺序</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
