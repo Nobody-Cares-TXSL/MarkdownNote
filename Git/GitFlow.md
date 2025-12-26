@@ -24,15 +24,14 @@ GitFlow 模型包含五大核心分支，每个分支都有明确的职责和使
 - **来源**：基于 Develop 分支创建
 - **命名规范**：`feature/功能名称`（如 `feature/user-authentication`）
 - **管理**：
-  - 仅存在于开发者本地，不建议推送到远程仓库
   - 功能开发完成后合并回 Develop 分支
   - 永远不会直接与 Master 分支交互
-  - push到远程仓库,进行pull request,等待审核合并
-
+  - push到远程仓库,发起 Pull Request/Merge Request 请求合并回 Develop 分支
+  - 经过 Code Review（代码审核）通过后方可合并
 ### 4. Release 分支（发布分支）
 - **用途**：准备新版本发布
 - **来源**：基于 Develop 分支创建
-- **命名规范**：`release/x.x`（如 `release/1.2`，x.x 为版本号）
+- **命名规范**：`release/x.y.z`（如 `release/1.2.0`，x.y.z为版本号）
 - **管理**：
   - 用于修复发布前的 bug
   - 不添加新功能，只处理 bug 修复和版本准备
@@ -43,14 +42,38 @@ GitFlow 模型包含五大核心分支，每个分支都有明确的职责和使
 ### 5. Hotfix 分支（热修复分支）
 - **用途**：紧急修复生产环境中的问题
 - **来源**：基于 Master 分支创建
-- **命名规范**：`hotfix/x.x.x`（如 `hotfix/1.2.1`，x.x.x 为版本号）
+- **命名规范**：`hotfix/x.y.z`（如 `hotfix/1.2.1`，x.y.z 为版本号）
 - **管理**：
   - 仅用于紧急修复，不处理新功能
   - 修复完成后同时合并回 Master 分支和 Develop 分支
   - 合并到 Master 分支后需要打版本标签
   - 修复完成后立即删除
+### 初始化仓库
+```bash
+# 1. 初始化本地仓库
+git init
 
+# 2. 添加远程仓库连接
+git remote add origin <远程仓库URL>
+
+# 3. 创建 Master 分支的首次提交
+git add .
+git commit --allow-empty -m "Initial commit"
+
+# 4. 创建 Develop 分支
+git checkout -b develop
+
+# 5. 推送两个核心分支到远程
+git push -u origin master
+git push -u origin develop
+
+# 6. 设置远程仓库的默认分支（可选但推荐）
+git remote set-head origin master
+```
+> --allow-empty 允许创建空提交
 ## 三、工作流程示例
+> 展示适用于单人开发或无 PR 强制要求的场景流程示例
+> **标准的现代流程为：推送功能分支到远程 -> 在平台上创建 PR -> 审核通过后在网页端点击合并。**
 
 ### 1. 功能开发流程
 1. 从 Develop 分支创建 Feature 分支
@@ -83,30 +106,30 @@ git branch -d feature/xxx
 git checkout develop
 git pull origin develop
 
-git checkout -b release/x.x develop
+git checkout -b release/x.y.z develop
 ```
 2. 在 Release 分支上进行 bug 修复和版本准备
 3. 测试通过后，将 Release 分支合并回 Master 分支并打版本标签
 ```bash
 git checkout master
-git merge --no-ff release/x.x
-git tag -a tagName -m "Release x.x"
+git merge --no-ff release/x.y.z
+git tag -a tagName -m "Release x.y.z"
 # 推送标签到远程仓库
-git push --tags
+git push origin tagName
 # 推送代码到远程仓库
 git push 
 ```
 4. 同时将 Release 分支合并回 Develop 分支，确保开发分支包含所有修复
 ```bash
 git checkout develop
-git merge --no-ff release/x.x
+git merge --no-ff release/x.y.z
 git push
 ```
 5. 删除 Release 分支
 ```bash
-git branch -d release/x.x
+git branch -d release/x.y.z
 # 如果之前推送了 Release 分支，则需要删除远程分支
-# git push origin --delete release/x.x
+# git push origin --delete release/x.y.z
 ```
 
 ### 3. 热修复流程
@@ -116,30 +139,30 @@ git branch -d release/x.x
 git checkout master
 git pull origin master
 
-git checkout -b hotfix/x.x.x master
+git checkout -b hotfix/x.y.z master
 ```
 2. 在 Hotfix 分支上修复问题
 3. 测试通过后，将 Hotfix 分支合并回 Master 分支并打版本标签
 ```bash
 git checkout master
-git merge --no-ff hotfix/x.x.x
-git tag -a tagName -m "Hotfix x.x.x"
+git merge --no-ff hotfix/x.y.z
+git tag -a tagName -m "Hotfix x.y.z"
 # 推送标签到远程仓库
-git push --tags
+git push origin tagName
 # 推送代码到远程仓库
 git push 
 ```
 4. 同时将 Hotfix 分支合并回 Develop 分支，确保开发分支包含修复
 ```bash
 git checkout develop
-git merge --no-ff hotfix/x.x.x
+git merge --no-ff hotfix/x.y.z
 git push
 ```
 5. 删除 Hotfix 分支
 ```bash
-git branch -d hotfix/x.x.x
+git branch -d hotfix/x.y.z
 # 如果之前推送了 Hotfix 分支，则需要删除远程分支
-# git push origin --delete hotfix/x.x.x
+# git push origin --delete hotfix/x.y.z
 ```
 ## 四、Git回退操作
 ### 有改动,无add,无commit
@@ -266,7 +289,8 @@ flowchart TD
 | :-: | :-: | :-: | :--:| :--: |
 | merge | 合并两个分支 | 改变工作目录和当前分支 | 在「接收合并的目标分支」上执行 |站在目标分支，合并进来 |
 | rebase | 将指定分支的提交历史，应用到当前分支 | 改变工作目录和当前分支 | 在「被变基的分支」上执行 | 站在被变基分支，基于基准变 |
-
+> ⚠️ 黄金法则：**永远不要对位于公共仓库之外的提交（即已经 push 到远程并被他人使用的提交）执行 Rebase。**  
+> 只对尚未推送或仅属于你个人的本地提交使用 Rebase。对公共历史 Rebase 会导致团队成员协作时产生混乱和代码丢失。
 ### 可视化对比
 **分支初始状态**
 ```mermaid
@@ -377,3 +401,7 @@ graph TD
 ```
 - main 分支：完全不受影响，指针仍指向 E；
 - feature 分支：指针从原来的 G 移到新的 G'（提交历史被重写）
+
+
+## 附录
+- 缺少 CI/CD 配置
