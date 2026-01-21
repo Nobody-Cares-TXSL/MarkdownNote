@@ -1,7 +1,7 @@
 # MySQL
 ## 初始化
 管理员身份运行cmd
-```mysql
+```sql
 -- 初始化
 mysqld --initialize-insecure
 -- 注册mysql服务
@@ -14,7 +14,7 @@ mysqladmin -u root password 1234
 mysql -uroot -p1234
 ```
 ## 卸载MySQL
-```mysql
+```sql
 -- 停止mysql服务
 net stop mysql
 -- 卸载mysql服务
@@ -22,14 +22,14 @@ mysqld -remove mysql
 ```
 ## MySQL 用户管理
 ### 查看用户
-```mysql
+```sql
 # 查看所有用户
 SELECT * FROM mysql.user;
 # 查看当前用户
 SELECT USER();
 ```
 ### 创建用户
-```mysql
+```sql
 -- 创建用户
 CREATE USER 'username'@'host' IDENTIFIED BY 'password';
 ```
@@ -38,70 +38,70 @@ CREATE USER 'username'@'host' IDENTIFIED BY 'password';
 - password：用户的密码。
 ### 权限管理
 #### 授予权限
-```mysql
+```sql
 GRANT privileges ON database_name.* TO 'username'@'host';
 ```
 - privileges：所需的权限，如 ALL PRIVILEGES、SELECT、INSERT、UPDATE、DELETE 等。
 - database_name.*：表示对某个数据库或表授予权限。database_name.* 表示对整个数据库的所有表授予权限，database_name.table_name 表示对指定的表授予权限。
 - TO 'username'@'host'：指定授予权限的用户和主机。
 #### 刷新权限
-```mysql
+```sql
 FLUSH PRIVILEGES;
 ```
 #### 查看权限
-```mysql
+```sql
 SHOW GRANTS FOR 'username'@'host';
 ```
 #### 撤销权限
-```mysql
+```sql
 REVOKE privileges ON database_name.* FROM 'username'@'host';
 ```
 - privileges：撤销的权限。
 ####  删除用户
-```mysql
+```sql
 DROP USER 'username'@'host';
 ```
 ### 修改用户密码
-```mysql
+```sql
 ALTER USER 'username'@'host' IDENTIFIED BY 'new_password';
 ```
 ### 修改用户主机
 先删除用户，再重新创建一个新的用户，指定新的主机。
 ## MySQL 管理
 ### 查看数据库
-```mysql
+```sql
 -- 查询所有数据库
 SHOW DATABASES;
 -- 显示当前数据库
 SELECT DATABASE();
 ```
 ### 使用数据库
-```mysql
+```sql
 -- 使用数据库
 USE db_name;
 ```
 - db_name：数据库名称。
 ### 显示指定数据库的所有表
-```mysql
+```sql
 -- 查询当前数据库的所有表
 SHOW TABLES;
 -- 查询指定数据库的所有表
 SHOW TABLES FROM db_name;
 ```
 ### 查看建表语句
-```mysql
+```sql
 -- 查询指定数据库的表的建表语句
 SHOW CREATE TABLE table_name;
 ```
 ### 显示表结构
-```mysql
+```sql
 -- 查询指定数据库的表的结构
 SHOW COLUMNS FROM table_name;
 -- 或者
 DESC table_name;
 ```
 ### 显示数据表的详细索引信息
-```mysql
+```sql
 -- 查询指定数据库的表的详细索引信息
 SHOW INDEX FROM table_name FROM db_name;
 
@@ -111,7 +111,7 @@ SHOW INDEX FROM table_name;
 ```
 ## MySQL 数据库管理
 ### 创建数据库
-```mysql
+```sql
 CREATE DATABASE [IF NOT EXISTS] database_name
   [CHARACTER SET charset_name]
   [COLLATE collation_name];
@@ -120,11 +120,11 @@ CREATE DATABASE [IF NOT EXISTS] database_name
 - CHARACTER SET charset_name：指定数据库的字符集。
 - COLLATE collation_name：指定数据库的排序规则。
 ### 删除数据库
-```mysql
+```sql
 DROP DATABASE [IF EXISTS] database_name;
 ```
 ### 使用数据库
-```mysql
+```sql
 -- 使用数据库
 USE db_name;
 ```
@@ -160,7 +160,7 @@ foreign key 外键
 | DCL | 用于创建数据库用户,控制数据库的访问权限 |
 ## 数据表
 ### 创建表
-```mysql
+```sql
 CREATE TABLE [IF NOT EXISTS] table_name (
     字段名 字段类型 [约束] [COMMENT '注释'],
     ...,
@@ -181,21 +181,21 @@ CREATE TABLE [IF NOT EXISTS] table_name (
 ### MySQL UNION 操作符
 - UNION 语句：用于将不同表中相同列中查询的数据展示出来；（不包括重复数据）
 - UNION ALL 语句：用于将不同表中相同列中查询的数据展示出来；（包括重复数据）
-```mysql
+```sql
 SELECT 列名称 FROM 表名称 UNION SELECT 列名称 FROM 表名称 ORDER BY 列名称;
 SELECT 列名称 FROM 表名称 UNION ALL SELECT 列名称 FROM 表名称 ORDER BY 列名称；
 ```
 ### 删除表
-```mysql
+```sql
 DROP TABLE [IF EXISTS] table_name;
 ```
 ### 表中插入数据
-```mysql
+```sql
 INSERT INTO table_name (column1, column2, column3, ...)
 VALUES (value1, value2, value3, ...);
 ```
 ### 表中查询数据
-```mysql
+```sql
 SELECT [DISTINCT] column1 [AS alias1], column2 [AS alias2], ...
 FROM table_name [AS table_alias]
 [WHERE condition]
@@ -247,34 +247,34 @@ FROM table_name [AS table_alias]
 > \w：匹配一个字母数字字符（包括下划线）。  
 > \s：匹配一个空白字符。
 ### 修改表中数据
-```mysql
+```sql
 UPDATE table_name
 SET column1 = value1, column2 = value2, ...
 WHERE condition;
 ```
 ### 删除表中的数据
-```mysql
+```sql
 DELETE FROM table_name
 WHERE condition;
 ```
 ## MySQL 连接
 ### INNER JOIN（内连接,或等值连接）：获取两个表中字段匹配关系的记录。
 ![img](https://img2024.cnblogs.com/blog/3471133/202511/3471133-20251123231309111-1688115681.png)
-```mysql
+```sql
 SELECT column1, column2, ...
 FROM table1 INNER JOIN table2 
 ON table1.column_name = table2.column_name;
 ```
 ### LEFT JOIN（左连接）：获取左表所有记录，即使右表没有对应匹配的记录。
 ![img](https://img2024.cnblogs.com/blog/3471133/202511/3471133-20251123231345213-918900682.png)
-```mysql
+```sql
 SELECT column1, column2, ...
 FROM table1 LEFT JOIN table2 
 ON table1.column_name = table2.column_name;
 ```
 ### RIGHT JOIN（右连接）： 与 LEFT JOIN 相反，用于获取右表所有记录，即使左表没有对应匹配的记录。
 ![img](https://img2024.cnblogs.com/blog/3471133/202511/3471133-20251123231405714-2078248523.png)
-```mysql
+```sql
 SELECT column1, column2, ...
 FROM table1 RIGHT JOIN table2 
 ON table1.column_name = table2.column_name;
@@ -283,14 +283,14 @@ ON table1.column_name = table2.column_name;
 > MySQL 的 ALTER 命令用于修改数据库、表和索引等对象的结构。
 
 ### 修改表名
-```mysql
+```sql
 -- 修改表名
 ALTER TABLE table_name
 RENAME TO new_table_name;
 ```
 
 ### 增加列
-```mysql
+```sql
 -- 增加单列
 ALTER TABLE table_name
 ADD COLUMN column_name data_type [约束条件];
@@ -302,21 +302,21 @@ ADD COLUMN column2 data_type [约束];
 ```
 
 ### 修改列定义
-```mysql
+```sql
 -- 修改列数据类型和约束
 ALTER TABLE table_name
 MODIFY COLUMN column_name new_data_type [新约束];
 ```
 
 ### 修改列名及数据类型
-```mysql
+```sql
 -- 同时修改列名和数据类型
 ALTER TABLE table_name
 CHANGE COLUMN old_column_name new_column_name new_data_type [约束];
 ```
 
 ### 删除列
-```mysql
+```sql
 -- 删除单列
 ALTER TABLE table_name
 DROP COLUMN column_name;
@@ -328,7 +328,7 @@ DROP COLUMN column2;
 ```
 
 ### 增加删除主键 PRIMARY KEY 约束
-```mysql
+```sql
 -- 增加单列主键
 ALTER TABLE table_name
 ADD PRIMARY KEY (column_name);
@@ -342,7 +342,7 @@ ALTER TABLE table_name
 DROP PRIMARY KEY;
 ```
 ### 添加外键 FOREIGN KEY 约束
-```mysql
+```sql
 -- 基本语法
 ALTER TABLE child_table
 ADD CONSTRAINT fk_name 
@@ -376,11 +376,11 @@ REFERENCES parent_table (parent_column)
 3. 外键约束会影响写入性能，不建议在高并发写入场景大量使用
 4. 可通过`SHOW CREATE TABLE child_table;`查看外键约束详情
 ### 删除外键约束
-```mysql
+```sql
 ALTER TABLE child_table DROP FOREIGN KEY fk_name;
 ```
 ### 修改表的存储引擎
-```mysql
+```sql
 -- 修改表的存储引擎
 ALTER TABLE table_name
 ENGINE = engine_name;  -- 例如 InnoDB, MyISAM 等
@@ -397,27 +397,27 @@ ENGINE = engine_name;  -- 例如 InnoDB, MyISAM 等
 - **持久性**：事务处理结束后，对数据的修改就是永久的，即便系统故障也不会丢失。
 ### 事务操作
 #### 开始事务
-```mysql
+```sql
 BEGIN; -- 或者使用 START TRANSACTION;
 ```
 #### 提交事务
-```mysql
+```sql
 COMMIT;
 ```
 #### 回滚事务
-```mysql
+```sql
 ROLLBACK;
 ```
 #### 事务中设置保存点
-```mysql
+```sql
 SAVEPOINT savepoint_name;
 ```
 #### 回滚到设置的保存点
-```mysql
+```sql
 ROLLBACK TO SAVEPOINT savepoint_name;
 ```
 #### 删除事务中设置的保存点
-```mysql
+```sql
 RELEASE SAVEPOINT savepoint_name;
 ```
 > 事务提交(COMMIT)或完全回滚(ROLLBACK)时，所有保存点会自动释放

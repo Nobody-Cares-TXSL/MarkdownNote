@@ -68,7 +68,7 @@
 - 可以在代码块中增添语言标识符以启用语法高亮
 ````Markdown
 以下为多行引用:
-```c++
+```cpp
 #include<iostream>
 using namespace std;
 int main()
@@ -80,7 +80,7 @@ int main()
 ````
 以下为多行引用:
 
-```c++
+```cpp
 #include<iostream>
 using namespace std;
 int main()
@@ -225,7 +225,7 @@ int main()
 
 这是一段折叠信息
 
-```c++
+```cpp
 #include<iostream>
 using namespace std;
 int main()
@@ -243,7 +243,7 @@ int main()
 
 这是一段折叠信息
 
-```c++
+```cpp
 #include<iostream>
 using namespace std;
 int main()

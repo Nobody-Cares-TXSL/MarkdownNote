@@ -10,13 +10,13 @@
   
 ### *1.1* 查看Git所有的配置以及它们所在的文件
   
-  ```
+  ```bash
   $ git config --list --show-origin
   ```
   
 ### *1.2* 设置你的用户名和邮件地址
   
-  ```
+  ```bash
   $ git config --global user.name "NobodyCares"
   $ git config --global user.email 3226234796@qq.com
   ```
@@ -25,14 +25,14 @@
   
 ### *1.3* 通过输入 `git config <key>`： 来检查 Git 的某一项配置：
   
-  ```
+  ```bash
   $ git config user.name
   NobodyCares
   ```
   
 ### *1.4* 获取帮助
   
-  ```
+  ```bash
   $ git help <Key>
   $ git <Key> --help
   // 例如获取git config 命令手册
@@ -45,7 +45,7 @@
   
 ### *2.1* 初始化仓库
   
-  ```
+  ```bash
   # 在项目中,打开Git Base
   $ git init
   ```

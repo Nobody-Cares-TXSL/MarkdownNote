@@ -25,7 +25,7 @@
 - 二叉搜索树(binary search tree) : 所有节点的左子树小于根节点, 右子树大于根节点. 左右子树也为二叉搜索树
 ### 二叉树遍历
 - 层序遍历(level order traversal) : 从根节点开始, 从上到下, 从左到右遍历所有节点 -> 时间复杂度: O(n)
-```c++
+```cpp
 // 层序遍历
 void level_order(Tree* root) {
     // 创建一个队列，用于存储待访问的节点
@@ -95,7 +95,7 @@ void level_insert(Tree** root, int n) {
 }
 ```
 - 前中后序遍历 -> 时间复杂度: O(n)
-```c++
+```cpp
 static std::vector<int> vec;
 // 前序遍历函数，用于遍历二叉树的前序遍历路径
 void pre_order(Tree* root) {
@@ -145,7 +145,7 @@ void dfs(Tree* root) {
 ```
 ### 二叉树的数组表示
 > 完全二叉树非常适合用数组表示, None只会出现在最底层且靠右的位置,所以层序遍历之后None全在末尾, 可以直接省略
-```c++
+```cpp
 class Binary_Tree_Array
 {
     public:
@@ -253,7 +253,7 @@ class Binary_Tree_Array
 > 节点度为0 : 直接删除
 > 节点度为1 : 将待删节点替换为待删节点的子节点
 > 节点度为2 : 找到左子树的最大节点或右子树的最小节点,标记该节点, 再删除左子树的最大节点或右子树的最小节点, 再将待删节点替换为标记节点
-```c++
+```cpp
 // 二叉搜索树
 class Binary_Search_Tree
 {
@@ -405,7 +405,7 @@ class Binary_Search_Tree
 > 节点的平衡因子的绝对值 > 1的节点为"失衡节点".
 >
 以下为AVL树的相关操作
-```c++
+```cpp
 // AVL树节点
 struct TreeNode
 {
@@ -613,7 +613,7 @@ class AVL_Tree
 1. 左旋
 <img width="504" alt="image" src="https://i-blog.csdnimg.cn/img_convert/7332c7f7f754b9b2976aeb76d6edea04.png">
 
-```c++
+```cpp
 // 左旋
     TreeNode* left_rotate(TreeNode* node) {
         TreeNode* child = node->right;
@@ -630,7 +630,7 @@ class AVL_Tree
 2. 右旋
 [![pVCPJJ0.png](https://i-blog.csdnimg.cn/img_convert/3c36ced00fcc54cebf2371f974953db0.png)](https://imgse.com/i/pVCPJJ0)
 
-```c++
+```cpp
 // 右旋
     TreeNode* right_rotate(TreeNode* node) {
         TreeNode* child = node->left;
@@ -652,7 +652,7 @@ class AVL_Tree
 [![pVCPtzT.png](https://i-blog.csdnimg.cn/img_convert/b1f0c70c1866b3a600317d17868e7692.png)](https://imgse.com/i/pVCPtzT)
 - 通过AVL树的不同情况选择不同的旋转操作,使树重新恢复平衡.
 以下为封装的旋转操作函数
-```c++
+```cpp
 // 旋转操作
     TreeNode* rotate(TreeNode* node) {
         // 获取节点node的平衡因子

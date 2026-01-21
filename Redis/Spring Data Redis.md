@@ -252,7 +252,7 @@ redisTemplate.opsForValue().setIfAbsent("lock","2"); //第二次有k失败
 
 ## 通用操作
 
-```go
+```java
         //keys 、exists、 type 、del
         //1.查找所有符合给定模式( pattern)的 key
         Set keys = redisTemplate.keys("*");

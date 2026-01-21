@@ -39,7 +39,7 @@
     - 脚注
       Hello [^1] 
 4. **代码**
-    ```c++ {.line-numbers} //可以指明代码语言 {.line-numbers} 显示代码行数
+    ```cpp {.line-numbers} //可以指明代码语言 {.line-numbers} 显示代码行数
     #include<iostream>
     using namespace std;
     int main()
