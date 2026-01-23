@@ -1,0 +1,65 @@
+# Claude Code
+
+> Anthropic 官方的 Claude AI 命令行工具，支持代码编写、调试、文件操作等功能。
+
+## 安装
+
+使用 Windows 包管理器 winget 安装：
+
+```powershell
+winget install Anthropic.ClaudeCode
+```
+
+## 配置
+
+### 1. 设置环境变量
+
+打开 PowerShell，执行以下命令：
+
+```powershell
+# API 密钥（替换为你的密钥）
+setx ANTHROPIC_AUTH_TOKEN "your_api_key_here"
+
+# API 基础 URL（使用智谱 AI 的 API）
+setx ANTHROPIC_BASE_URL "https://open.bigmodel.cn/api/anthropic"
+
+# 禁用非必要网络请求（推荐）
+setx CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC 1
+```
+
+| 环境变量 | 说明 |
+|---------|------|
+| `ANTHROPIC_AUTH_TOKEN` | API 认证密钥 |
+| `ANTHROPIC_BASE_URL` | API 服务地址 |
+| `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` | 禁用遥测等非必要请求 |
+
+### 2. 配置模型映射
+
+Claude 配置文件默认位置：
+
+```
+C:\Users\<用户名>\.claude\settings.json
+```
+
+编辑 `settings.json`（如果不存在则创建）：
+
+```json
+{
+    "env": {
+        "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air",
+        "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.7",
+        "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-4.7"
+    }
+}
+```
+
+## 常用操作
+
+### 基本命令
+
+| 命令 | 说明 |
+|------|------|
+| `claude` | 启动 Claude Code |
+| `/help` | 查看帮助信息 |
+| `/clear` | 清空对话历史 |
+| `/exit` | 退出程序 |
