@@ -27,11 +27,15 @@ setx ANTHROPIC_BASE_URL "https://open.bigmodel.cn/api/anthropic"
 setx CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC 1
 ```
 
+**环境变量说明：**
+
 | 环境变量 | 说明 |
 |---------|------|
 | `ANTHROPIC_AUTH_TOKEN` | API 认证密钥 |
 | `ANTHROPIC_BASE_URL` | API 服务地址 |
 | `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` | 禁用遥测等非必要请求 |
+
+> 设置环境变量后需要重启终端才能生效
 
 ### 2. 配置模型映射
 
@@ -63,3 +67,28 @@ C:\Users\<用户名>\.claude\settings.json
 | `/help` | 查看帮助信息 |
 | `/clear` | 清空对话历史 |
 | `/exit` | 退出程序 |
+| `/plugin marketplace list` | 列出所有已添加的市场 |
+
+### 添加市场并安装插件
+
+**添加市场：**
+
+```powershell
+# 直接用 HTTPS 添加市场
+/plugin marketplace add HTTPS
+
+# 例如增加 anthropics 的 skills 仓库
+/plugin marketplace add https://github.com/anthropics/skills
+```
+
+> 本质上就是帮你自动执行了一次 git clone，把远程仓库拉取到了你本地的 `C:\Users\<用户名>\.claude\plugins\marketplaces` 目录下
+
+**安装插件：**
+
+```powershell
+# 安装 anthropics/skills 仓库中的插件包
+/plugin install document-skills@anthropic-agent-skills
+/plugin install example-skills@anthropic-agent-skills
+```
+
+> 安装到 `C:\Users\<用户名>\.claude\plugins\cache` 目录下
