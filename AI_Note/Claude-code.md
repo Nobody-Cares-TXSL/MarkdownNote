@@ -68,6 +68,7 @@ C:\Users\<用户名>\.claude\settings.json
 | `/clear` | 清空对话历史 |
 | `/exit` | 退出程序 |
 | `/plugin marketplace list` | 列出所有已添加的市场 |
+| `/terminal-setup` | 启用便捷的终端集成功能，例如支持按 Shift + Enter 换行 |
 
 ### 添加市场并安装插件
 
