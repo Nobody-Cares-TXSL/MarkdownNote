@@ -13,4 +13,5 @@
   1. 定义一个自动配置类，在自动配置类中将所要配置的bean都提前配置好
   2. 定义配置文件，把自动配置类的全类名定义在配置文件(META-INF/spring/xxxx.imports)中
 
-![3968X1684/SpringBoot自动配置.png](https://tc-new.z.wiki/autoupload/f/ysNJy6oaVi9q7Gdzj9MLEwltnIuRGTHBNTzJvC5G0G2yl5f0KlZfm6UsKj-HyTuv/20250819/IJa7/3968X1684/SpringBoot%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE.png)
+
+![img](https://img2024.cnblogs.com/blog/3471133/202601/3471133-20260130210737932-1847065539.png)

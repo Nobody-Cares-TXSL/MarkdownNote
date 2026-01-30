@@ -3,28 +3,46 @@
 - [依赖搜索地址](https://mvnrepository.com/),此链接指向专业的 Maven 仓库搜索平台，可用于查找项目所需的各类依赖。
 ## Maven 配置
 ### 配置环境变量
-1. 下载解压后添加到环境变量中
-![653X183/Snipaste_2025-07-17_03-03-17.png](https://tc.z.wiki/autoupload/f/XrZ3KSvg-vznRvezsTJQSyU3Jsth-gW-s0TGLnbf7q2yl5f0KlZfm6UsKj-HyTuv/20250717/3QwP/653X183/Snipaste_2025-07-17_03-03-17.png)
+1. 下载解压后添加到环境变量中  
+
+![img](https://img2024.cnblogs.com/blog/3471133/202601/3471133-20260130205808461-1054197445.png)
+
 2. 增加Path变量  
-![581X427/Snipaste_2025-07-17_03-07-00.png](https://tc.z.wiki/autoupload/f/XrZ3KSvg-vznRvezsTJQSyU3Jsth-gW-s0TGLnbf7q2yl5f0KlZfm6UsKj-HyTuv/20250717/HWDG/581X427/Snipaste_2025-07-17_03-07-00.png)
+
+![img](https://img2024.cnblogs.com/blog/3471133/202601/3471133-20260130205922662-1556770289.png)
+
 3. 测试环境变量是否添加成功
-![960X480/Snipaste_2025-07-17_03-08-57.png](https://tc.z.wiki/autoupload/f/XrZ3KSvg-vznRvezsTJQSyU3Jsth-gW-s0TGLnbf7q2yl5f0KlZfm6UsKj-HyTuv/20250717/1v4G/960X480/Snipaste_2025-07-17_03-08-57.png)
+
+![img](https://img2024.cnblogs.com/blog/3471133/202601/3471133-20260130205957797-971510251.png)
+
 ### 配置文件
 1. 在maven文件下新增mvn_repo文件夹
-![447X301/Snipaste_2025-07-17_03-43-42.png](https://tc.z.wiki/autoupload/f/XrZ3KSvg-vznRvezsTJQSyU3Jsth-gW-s0TGLnbf7q2yl5f0KlZfm6UsKj-HyTuv/20250717/sHK4/447X301/Snipaste_2025-07-17_03-43-42.png)
+
+![img](https://img2024.cnblogs.com/blog/3471133/202601/3471133-20260130210111341-413638396.png)
+
 2. 修改配置conf文件夹下的settings.xml文件
 - 添加本地仓库路径
 > 路径为: 刚才新建的mvn_repo文件夹路径
-![738X139/Snipaste_2025-07-17_03-46-57.png](https://tc.z.wiki/autoupload/f/XrZ3KSvg-vznRvezsTJQSyU3Jsth-gW-s0TGLnbf7q2yl5f0KlZfm6UsKj-HyTuv/20250717/Rokf/738X139/Snipaste_2025-07-17_03-46-57.png)
+
+![img](https://img2024.cnblogs.com/blog/3471133/202601/3471133-20260130210125067-916722829.png)
+
 - 在mirrors标签下添加阿里云仓库  
-![615X412/Snipaste_2025-07-17_03-47-24.png](https://tc.z.wiki/autoupload/f/XrZ3KSvg-vznRvezsTJQSyU3Jsth-gW-s0TGLnbf7q2yl5f0KlZfm6UsKj-HyTuv/20250717/mId6/615X412/Snipaste_2025-07-17_03-47-24.png)
+
+![img](https://img2024.cnblogs.com/blog/3471133/202601/3471133-20260130210134899-621704589.png)
+
 ### 在IDEA中配置maven构建环境
 1. 配置maven环境
-![982X734/Snipaste_2025-07-17_03-57-29.png](https://tc.z.wiki/autoupload/f/XrZ3KSvg-vznRvezsTJQSyU3Jsth-gW-s0TGLnbf7q2yl5f0KlZfm6UsKj-HyTuv/20250717/wqqf/982X734/Snipaste_2025-07-17_03-57-29.png)  
+
+![img](https://img2024.cnblogs.com/blog/3471133/202601/3471133-20260130210213043-47248691.png)
+
 2. 在运行程序配置JRE
-![982X734/Snipaste_2025-07-17_03-58-28.png](https://tc.z.wiki/autoupload/f/XrZ3KSvg-vznRvezsTJQSyU3Jsth-gW-s0TGLnbf7q2yl5f0KlZfm6UsKj-HyTuv/20250717/Z287/982X734/Snipaste_2025-07-17_03-58-28.png)  
+
+![img](https://img2024.cnblogs.com/blog/3471133/202601/3471133-20260130210221554-1240004630.png)
+
 3. 项目结构中配置SDK
-![1024X854/Snipaste_2025-07-17_04-01-45.png](https://tc.z.wiki/autoupload/f/XrZ3KSvg-vznRvezsTJQSyU3Jsth-gW-s0TGLnbf7q2yl5f0KlZfm6UsKj-HyTuv/20250717/l9l4/1024X854/Snipaste_2025-07-17_04-01-45.png)  
+
+![img](https://img2024.cnblogs.com/blog/3471133/202601/3471133-20260130210229326-956839048.png)
+
 ## maven基础
 ### 依赖配置
 ```xml
@@ -84,7 +102,9 @@
 ```
 #### 依赖范围
 - 可以通过`scope`标签设置依赖范围来控制依赖包的作用范围。
-![398X162/Snipaste_2025-07-18_02-13-10.png](https://tc.z.wiki/autoupload/f/XrZ3KSvg-vznRvezsTJQSyU3Jsth-gW-s0TGLnbf7q2yl5f0KlZfm6UsKj-HyTuv/20250718/4cH3/398X162/Snipaste_2025-07-18_02-13-10.png)
+
+![img](https://img2024.cnblogs.com/blog/3471133/202601/3471133-20260130210254510-155828861.png)
+
 ### maven生命周期
 Maven有三种生命周期：
 1. clean：清理项目
@@ -104,9 +124,12 @@ Maven有三种生命周期：
 - **Junit单元测试类名命名规范为: XXXTest** 
 - **Junit单元测试方法命名规范为: testXXX** , **方法上增加`@Test`注解**, **必须声明为`public void`**
 ### 常用注解
-[![pV39V5d.jpg](https://s21.ax1x.com/2025/07/17/pV39V5d.jpg)](https://imgse.com/i/pV39V5d)  
+
+![img](https://img2024.cnblogs.com/blog/3471133/202601/3471133-20260130210554438-354019928.jpg)
+
 ### 断言
-[![pV39ePA.jpg](https://s21.ax1x.com/2025/07/17/pV39ePA.jpg)](https://imgse.com/i/pV39ePA)
+
+![img](https://img2024.cnblogs.com/blog/3471133/202601/3471133-20260130210612650-1680802796.jpg)
 
 ## 继承
 + 子工程继承父工程的依赖

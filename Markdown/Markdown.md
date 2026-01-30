@@ -56,7 +56,7 @@
 6. **图片**
     - 使用图床保存图片并实现插入
         [路过图床] https://imgse.com/
-    - 使用Markdown语法插入
+    - 使用Markdown语法插入  
     [![pkkvTNn.jpg](https://s21.ax1x.com/2024/05/03/pkkvTNn.jpg)](https://imgse.com/i/pkkvTNn)
     - 使用html语言实现调整图片大小和位置功能   
     - align=center居中,left居左,right居右
