@@ -234,7 +234,8 @@ FROM table_name [AS table_alias]
 - **MAX(column)**：找出列中的最大值
 - **MIN(column)**：找出列中的最小值
 #### 正则表达式匹配的字符类  
-> .：匹配任意单个字符。  
+> .：匹配任意单个字符。    
+> %：匹配任意个字符。   
 > ^：匹配字符串的开始。  
 > $：匹配字符串的结束。  
 > *：匹配零个或多个前面的元素。  
@@ -245,7 +246,7 @@ FROM table_name [AS table_alias]
 > [a-z]：匹配范围内的任意一个小写字母。  
 > [0-9]：匹配一个数字字符。  
 > \w：匹配一个字母数字字符（包括下划线）。  
-> \s：匹配一个空白字符。
+> \s：匹配一个空白字符。   
 ### 修改表中数据
 ```sql
 UPDATE table_name
@@ -421,6 +422,16 @@ ROLLBACK TO SAVEPOINT savepoint_name;
 RELEASE SAVEPOINT savepoint_name;
 ```
 > 事务提交(COMMIT)或完全回滚(ROLLBACK)时，所有保存点会自动释放
+#### 查看当前事务隔离级别
+```sql
+SELECT @@TRANSACTION_ISOLATION;
+```
+#### 设置事务隔离级别
+```sql
+SET [SESSION | GLOBAL] TRANSACTION ISOLATION LEVEL [READ UNCOMMITTED | READ COMMITTED | REPEATABLE READ | SERIALIZABLE];
+```
+- **SESSION**：设置当前会话的隔离级别，对后续事务生效。
+- **GLOBAL**：设置全局默认的隔离级别，对所有新连接生效。
 ### 事务隔离级别
 ![img](https://img2024.cnblogs.com/blog/3471133/202511/3471133-20251125115004693-1431931328.png)
 - **READ-UNCOMMITTED（读未提交）**：最低级别，允许读未提交数据，存在脏读、不可重复读、幻读问题。
@@ -438,8 +449,52 @@ RELEASE SAVEPOINT savepoint_name;
 > 不可重复读 vs 幻读：    
 > - 不可重复读针对的是某一行数据的值被修改（UPDATE）。  
 > - 幻读针对的是结果集的行数发生变化（INSERT/DELETE）。  
+
+## 存储引擎
+| 存储引擎 | 描述 | 事务支持 | 锁机制 | 外键约束 | 其他特点 |
+|---------|------|---------|--------|---------|---------|
+| **InnoDB** | MySQL 默认的存储引擎 | 支持 ACID | 行级锁 | 支持 | DML操作可靠，并发性能好 |
+| **MyISAM** | MySQL 早期的存储引擎 | 不支持 | 表级锁 | 不支持 | - |
+| **Memory** | 表数据存储在内存中 | 不支持 | 表级锁 | 不支持 | 查询速度快，不保证数据安全，支持hash索引(默认) |
+
+- 查看当前数据库的存储引擎
+```sql
+SHOW ENGINES;
+```
+### InnoDB
+> InnoDB 是 MySQL 默认的存储引擎。  
+> 特点: 
+> 1. DML操作(增删改)**支持事务（ACID）**，提供了可靠的事务处理。
+> 2. **支持行级锁**，并发性能好。
+> 3. **支持外键 FOREIGN KEY 约束**，维护数据完整性。
+
+### MyISAM
+> MyISAM 是 MySQL 早期的存储引擎。
+> 特点: 
+> 1. **不支持事务（ACID）**，不提供可靠的事务处理。
+> 2. **支持表级锁，不支持行级锁。**
+> 3. **不支持外键 FOREIGN KEY 约束**，不维护数据完整性。
+
+### Memory
+> Memory 是 MySQL 中的一种存储引擎，它将表数据存储在内存中，而不是磁盘上。
+> 特点: 
+> 1. **不支持事务（ACID）**，不提供可靠的事务处理。
+> 2. **支持表级锁，不支持行级锁。**
+> 3. **不支持外键 FOREIGN KEY 约束**，不维护数据完整性。
+> 4. **表数据存储在内存中**，查询速度快, 但不保证数据安全。
+> 5. **支持hash索引**(默认)
+
+
 ## MySQL 索引
 > 索引是数据库中提高查询效率的关键，索引的创建和删除需要消耗一定的时间，所以索引的创建和删除应该在业务量小的时候进行。
+
+### 索引结构
+| 索引 | InnoDB | MyISAM | Memory |
+|---------|------|--------|--------|
+| B+tree索引 | 支持 | 支持 | 支持 |
+| Hash索引 | 不支持 | 不支持 | 支持 |
+| R-Tree索引 | 不支持 | 支持 | 不支持 |
+| Full-Text索引 | 5.6版本之后支持 | 支持 | 不支持 |
 ### 索引类型
 | 索引类型 | 定义 | 核心特性 |
 |---------|------|--------|
@@ -448,6 +503,105 @@ RELEASE SAVEPOINT savepoint_name;
 | 普通索引（INDEX） | 最基础的索引类型，无唯一性限制 | 1. 允许重复值和NULL值；<br>2. 一张表可创建多个普通索引；<br>3. 非聚簇索引 |
 | 全文索引（FULLTEXT） | 专用于长文本字段关键词搜索的索引 | 1. 仅支持CHAR、VARCHAR、TEXT类型；<br>2. 支持自然语言和布尔搜索；<br>3. 忽略停用词 |
 | 组合索引（Composite Index） | 基于多个字段联合创建的索引 | 1. 遵循"最左前缀原则"；<br>2. 字段顺序影响查询效率；<br>3. 可包含唯一约束 |
+
+### 索引语句
+#### 创建索引
+```sql
+CREATE [UNIQUE | FULLTEXT] INDEX index_name ON table_name (column_name);
+```
+- UNIQUE 索引：确保索引列值唯一，不允许重复值。
+- FULLTEXT 索引：用于长文本字段关键词搜索，支持自然语言和布尔搜索。
+
+#### 查看索引
+```sql
+SHOW INDEX FROM table_name;
+```
+
+#### 删除索引
+```sql
+DROP INDEX index_name ON table_name;
+```
+
+## SQL优化
+### SQL性能分析
+#### 查看SQL执行频率
+```sql
+SHOW STATUS LIKE 'Com_%';
+```
+- Com_select：查询语句执行次数
+- Com_insert：插入语句执行次数
+- Com_update：更新语句执行次数
+- Com_delete：删除语句执行次数
+
+#### 慢查询日志
+> 慢查询日志记录了执行时间超过指定阈值的SQL语句，帮助定位性能问题。
+> MySQL 慢查询日志默认是关闭的，需要手动开启。
+
+##### 查看慢查询日志开关
+```sql
+SHOW VARIABLES LIKE 'slow_query_log';
+```
+##### 开启慢查询日志
+需要在MySQL的配置文件(/etc/my.cnf)中添加以下配置：
+```sql
+# 开启慢查询日志
+slow_query_log = 1
+# 设置慢查询阈值（单位：秒）
+long_query_time = 2
+```
+配置完成后，`systemctl restart mysqld`重启MySQL服务使配置生效。  
+查看慢查询日志文件中记录的信息`/var/lib/mysql/localhost-slow.log`
+
+#### profile
+> profile 是 MySQL 提供的一个性能分析工具，用于分析 SQL 语句的执行时间、资源消耗等。  
+> 开启 profile 后，每次执行 SQL 语句后，会在结果中添加一个额外的行，显示该语句的执行时间、资源消耗等信息。
+
+##### 查看当前MySQL是否支持profile
+```sql
+SELECT @@have_profiling;
+```
+##### 查看当前MySQL是否开启profile
+```sql
+SELECT @@profiling;
+```
+##### 开启profile
+```sql
+SET profiling = 1;
+```
+##### 查看profile信息
+```sql
+SHOW PROFILES;
+```
+##### 查看指定query_id的profile信息
+```sql
+SHOW PROFILE FOR QUERY query_id;
+```
+##### 查看指定query_id的CPU profile详情
+```sql
+SHOW PROFILE CPU FOR QUERY query_id;
+```
+#### explain执行计划
+> explain 是 MySQL 提供的一个分析 SQL 语句执行计划的工具，帮助开发人员优化查询性能。
+
+##### 查看explain执行计划
+```sql
+EXPLAIN SELECT * FROM table_name WHERE condition;
+```
+##### 执行计划字段详解
+| 字段 | 说明 |
+|:-----|:-----|
+| **id** | SELECT 查询的序列号，表示执行顺序（**id 相同从上到下执行；id 不同值越大越先执行**） |
+| **select_type** | 查询类型，如 SIMPLE、PRIMARY、SUBQUERY 等 |
+| **table** | 查询涉及的表名 |
+| **partitions** | 查询使用的分区信息 |
+| **type** | 连接类型，性能由好到差：**NULL → SYSTEM → CONST → EQ_REF → REF → RANGE → INDEX → ALL**（**ALL 表示全表扫描，性能最差**） |
+| **possible_keys** | 可能使用的索引 |
+| **key** | 实际使用的索引 |
+| **key_len** | 使用的索引长度 |
+| **ref** | 索引列与查询条件的比较操作 |
+| **rows** | 预估扫描的行数（**越少越好**） |
+| **filtered** | 过滤比例（存储引擎返回后经条件过滤的百分比） |
+| **Extra** | 额外执行信息，如 Using filesort、Using temporary 等 |
 
 ## MySQL 临时表
 ## MySQL 复制表
