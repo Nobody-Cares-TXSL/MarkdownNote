@@ -27,3 +27,28 @@ $OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = New-Obj
 - `chcp` 查看当前编码
 > 当编码为 65001 时，PowerShell 编码为 UTF-8  
 > 当编码为 936 时，PowerShell 编码为 GBK
+
+## 在 PowerShell 中 启动 git bash 终端
+```powershell
+# 确认是否存在配置
+Test-Path $PROFILE
+# 如果返回 False，输入 New-Item -Type File -Force $PROFILE 创建它。
+
+# 确认 Git 的安装位置
+Get-Command git | Select-Object Source
+# 比如输出: D:\Git\Git\cmd\git.exe
+# 则可确认bash的执行文件在: D:\Git\Git\bin\bash.exe
+
+# 打开$PROFILE 文件
+notepad $PROFILE
+
+# 在$PROFILE 文件中添加以下内容
+# 双引号内填确认的bash执行文件的路径
+function bash {
+    & "D:\Git\Git\bin\bash.exe" $args
+}
+
+# 重新加载配置
+. $PROFILE
+```
+以后直接在 PowerShell 中输入 `bash` 即可启动 git bash 终端
