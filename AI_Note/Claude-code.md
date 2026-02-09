@@ -390,3 +390,6 @@ $env:CLAUDE_CODE_GIT_BASH_PATH = "D:\Git\Git\bin\bash.exe"
 # 重新加载配置
 . $PROFILE
 ```
+
+## 配置/statusline
+[Claude-code-statusline](./Claude-code-statusline.md)
