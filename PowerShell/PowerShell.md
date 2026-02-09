@@ -52,3 +52,14 @@ function bash {
 . $PROFILE
 ```
 以后直接在 PowerShell 中输入 `bash` 即可启动 git bash 终端
+
+## 解决 PowerShell 中 python 编码问题
+```powershell
+# 1. 打开$PROFILE 文件
+notepad $PROFILE
+# 2. 在 $PROFILE 文件中添加以下内容
+# 统一输入输出编码为 UTF-8，解决中文乱码
+$env:PYTHONIOENCODING="utf-8"
+# 重新加载配置
+. $PROFILE
+```
