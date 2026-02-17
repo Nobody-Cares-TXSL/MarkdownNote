@@ -181,3 +181,24 @@ sudo apt install apt-transport-https
 sudo apt update
 sudo apt install code
 ```
+
+### 修复VS Code图标问题
+
+**问题现象**：任务栏/启动器中 VS Code 图标显示为通用齿轮图标
+
+**解决步骤**：
+
+1. **获取正确的 WMClass 值**
+   - 打开 VS Code
+   - 按 `Alt + F2` 打开运行对话框
+   - 输入 `lg` 并按 Enter（打开 Looking Glass）
+   - 点击右上角的 "windows" 标签
+   - 点击 VS Code 窗口，找到 `StartupWMClass` 的值
+
+2. **修改 desktop 文件**
+   ```bash
+   sudo nano /usr/share/applications/code.desktop
+   ```
+   找到 `StartupWMClass=` 一行，修改为步骤1中获取的值
+
+3. **重启电脑生效**
