@@ -15,6 +15,87 @@ sudo apt --fix-broken install
 rm google-chrome-stable_current_amd64.deb
 ```
 
+## 安装搜狗输入法
+```bash
+# 更新系统软件包
+sudo apt update
+
+# 卸载 Fcitx5 和 IBus（如果存在）
+sudo apt remove --purge fcitx5* ibus*
+
+# 清理系统残留
+sudo apt autoremove && sudo apt autoclean
+
+# 安装 Fcitx4 输入法框架
+sudo apt install fcitx
+
+# 设置 Fcitx 开机自启动
+sudo cp /usr/share/applications/fcitx.desktop /etc/xdg/autostart/
+
+# 设置 -> 系统 -> 区域和语言 -> 管理已安装语言 -> 增加简体中文;选择Fcitx4;应用到整个系统
+
+# 下载搜狗输入法 deb 包 https://shurufa.sogou.com/linux
+# deb格式选择
+# 查看CPU架构
+uname -m
+# 如果输出是 x86_64，下载 “x86_64 ↓”。
+# 如果是 aarch64 或类似，下载 “arm64 ↓”。
+# 如果是 mips64el，下载 “mips64el ↓”。
+# 如果是 loongarch64，下载 “loongarch64 ↓”。
+
+# cd到下载目录,安装搜狗输入法
+sudo dpkg -i sogoupinyin_*.deb
+
+# 安装必要的依赖包
+sudo apt install libqt5qml5 libqt5quick5 libqt5quickwidgets5 qml-module-qtquick2
+sudo apt install libgsettings-qt1
+
+# 修复可能的依赖关系问题
+sudo apt install -f
+
+# 修改配置文件
+sudo nano /etc/gdm3/custom.conf
+# 找到以下行并取消注释（删除行首的 #）：
+# WaylandEnable=false
+# 修改后应该是：
+WaylandEnable=false 
+```
+> 设置WaylandEnable=false后, 触摸板的手势功能会失效  
+> 
+> 手势的三指上下滑打开应用网格可以按 `Super(Win键) + A` 打开  
+> 手势的三指左右滑切换窗口可以按 `Super(Win键) + Alt + 方向键` 切换
+> 
+> 查看当前会话类型: `echo $XDG_SESSION_TYPE`
+> 
+> - 如果输出是 `x11`，说明正在使用 Xorg（Wayland 已禁用）。
+> - 如果输出是 `wayland`，说明正在使用 Wayland（Wayland 已启用）。
+
+
+### 不显示搜狗输入法
+```bash
+# 1. 检查 Fcitx 是否安装成功
+fcitx --version
+
+# 2. 配置 im-config 使用 Fcitx
+im-config -n fcitx
+
+# 3. 设置环境变量 (注意: 这里使用 zsh, 如果使用 bash, 请修改为 ~/.bashrc)
+echo 'export GTK_IM_MODULE=fcitx' >> ~/.zshrc
+echo 'export QT_IM_MODULE=fcitx' >> ~/.zshrc
+echo 'export XMODIFIERS=@im=fcitx' >> ~/.zshrc
+source ~/.zshrc
+
+# 4. 手动启动 Fcitx 测试
+fcitx -d
+
+# 5. 如果提示有进程冲突，先杀掉
+killall fcitx
+fcitx -d
+
+# 6. 打开 Fcitx 配置,将搜狗输入法调整到第一位
+fcitx-configtool
+```
+
 ## 安装 VS Code
 - vs code: https://code.visualstudio.com/docs/setup/linux
 ```bash

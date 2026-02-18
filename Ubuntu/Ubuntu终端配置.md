@@ -177,6 +177,18 @@ size = 12.0
 
 [window]
 opacity = 0.95
+
+# 设置复制快捷键 Ctrl + Insert
+[[keyboard.bindings]]
+key = "Insert"
+mods = "Control"
+action = "Copy"
+
+# 设置粘贴快捷键 Shift + Insert
+[[keyboard.bindings]]
+key = "Insert"
+mods = "Shift"
+action = "Paste"
 ```
 
 # 迁移bash配置到zsh
