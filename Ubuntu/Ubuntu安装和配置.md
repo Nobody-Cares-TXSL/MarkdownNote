@@ -107,7 +107,7 @@
 sudo snap list
 
 # 卸载所有Snap软件
-sudo snap remove --purge [snap-name]
+sudo snap remove --purge <package-name>
 
 # 卸载 snapd
 sudo apt purge snapd
@@ -126,7 +126,7 @@ Pin-Priority: -10
 # Ctrl + X 退出
 
 # 检查是否系统有Snap残留
-# 检查是否有Snap软件包 (需要自行判断删除 -> 使用 sudo apt remove --purge [软件包])
+# 检查是否有Snap软件包 (需要自行判断删除 -> 使用 sudo apt remove --purge <package-name>)
 dpkg -l | grep snap
 # 自动删除不再被任何已安装软件依赖的"孤儿"包
 sudo apt autoremove
@@ -140,65 +140,3 @@ apt policy snapd
 mount | grep snap
 ```
 
-## 安装 Google Chrome
-```bash
-# 1. 下载 Chrome deb 包
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-
-# 2. 安装
-sudo dpkg -i google-chrome-stable_current_amd64.deb
-
-# 3. 如果有依赖问题，修复
-sudo apt --fix-broken install
-
-# 4. 清理安装包
-rm google-chrome-stable_current_amd64.deb
-```
-
-## 安装 VS Code
-```bash
-# 安装依赖项
-sudo apt-get install wget gpg
-
-# 安装 Microsoft 签名密钥
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-sudo install -D -o root -g root -m 644 microsoft.gpg /usr/share/keyrings/microsoft.gpg
-rm -f microsoft.gpg
-
-# 添加 VS Code 仓库
-# 创建文件 /etc/apt/sources.list.d/vscode.sources
-sudo nano /etc/apt/sources.list.d/vscode.sources
-# 添加内容：
-Types: deb
-URIs: https://packages.microsoft.com/repos/code
-Suites: stable
-Components: main
-Architectures: amd64,arm64,armhf
-Signed-By: /usr/share/keyrings/microsoft.gpg
-
-# 更新包缓存并安装 VS Code
-sudo apt install apt-transport-https
-sudo apt update
-sudo apt install code
-```
-
-### 修复VS Code图标问题
-
-**问题现象**：任务栏/启动器中 VS Code 图标显示为通用齿轮图标
-
-**解决步骤**：
-
-1. **获取正确的 WMClass 值**
-   - 打开 VS Code
-   - 按 `Alt + F2` 打开运行对话框
-   - 输入 `lg` 并按 Enter（打开 Looking Glass）
-   - 点击右上角的 "windows" 标签
-   - 点击 VS Code 窗口，找到 `StartupWMClass` 的值
-
-2. **修改 desktop 文件**
-   ```bash
-   sudo nano /usr/share/applications/code.desktop
-   ```
-   找到 `StartupWMClass=` 一行，修改为步骤1中获取的值
-
-3. **重启电脑生效**
