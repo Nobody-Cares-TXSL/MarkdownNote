@@ -192,9 +192,9 @@ action = "Paste"
 ```
 
 # 迁移bash配置到zsh
-bash转zsh后, 需把之前在 `~/.bashrc` 中的配置, 迁移到 `~/.zshrc` 中
+bash转zsh后, 需把之前在 `~/.bashrc` 中的配置, 迁移到 `~/.zshrc` 中, 迁移后需 `source ~/.zshrc`
 
-- Node.js 环境变量配置
+## Node.js 环境变量配置
 ```bash
 # NVM 配置
 export NVM_DIR="$HOME/.nvm"
@@ -202,8 +202,22 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 ```
 
-- Claude 环境变量配置
+## Claude 环境变量配置
 ```bash
 # Claude Code PATH 配置
 export PATH="$HOME/.local/bin:$PATH"
+```
+
+## Java JDK 环境变量`JAVA_HOME`配置
+```bash
+# Java JDK 配置
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export PATH="$JAVA_HOME/bin:$PATH"
+```
+
+## Maven 环境变量配置
+```bash
+# Maven 配置
+export MAVEN_HOME=/opt/maven
+export PATH=$MAVEN_HOME/bin:$PATH
 ```

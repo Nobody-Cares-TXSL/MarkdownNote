@@ -145,6 +145,47 @@ sudo apt install code
 
 3. **重启电脑生效**
 
+## 安装 Claude code
+- Claude code: https://code.claude.com/docs/zh-CN/setup
+
+> 原生安装已不再依赖 Node.js, 可以直接安装 Claude code CLI
+```bash
+# 安装 Claude code CLI
+curl -fsSL https://claude.ai/install.sh | bash
+
+# 把 ~/.local/bin 加到 PATH，并且让当前终端立刻生效
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
+
+# 在shell的配置文件中添加claude环境变量
+
+# 验证安装
+claude --version
+```
+> [Claude 环境变量配置](./Ubuntu终端配置.md#claude-环境变量配置)
+
+### 配置 Claude code
+- Linux 的配置文件为 `~/.claude/settings.json`
+```json
+{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "your_zhipu_api_key",
+    "ANTHROPIC_BASE_URL": "https://open.bigmodel.cn/api/anthropic",
+    "API_TIMEOUT_MS": "3000000",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": 1,
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.7",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-4.7"
+  },
+  "language": "chinese"
+}
+```
+- 跳过新手引导: 在`~/.claude.json`中增加 `hasCompletedOnboarding` 参数    
+```json
+{
+  "hasCompletedOnboarding": true
+}
+```
+
 ## 安装 Git
 ```bash
 # 1. 更新软件包列表
@@ -183,45 +224,204 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 # 3. 安装 Node.js LTS 版本
 nvm install 24
 
+# 在shell的配置文件中添加nvm环境变量
+
 # 4. 验证安装
 node -v      # 应显示 v24.x.x
 npm -v       # 应显示 11.x.x
 ```
+> [Node.js 环境变量配置](./Ubuntu终端配置.md#nodejs-环境变量配置)
 
-## 安装 Claude code
-- Claude code: https://code.claude.com/docs/zh-CN/setup
+## 安装 MySQL
+- MySQL: https://documentation.ubuntu.com/server/how-to/databases/install-mysql/
 
-> 原生安装已不再依赖 Node.js, 可以直接安装 Claude code CLI
 ```bash
-# 安装 Claude code CLI
-curl -fsSL https://claude.ai/install.sh | bash
+# 确保端口3306未被占用 -> 没有输出说明未被占用
+sudo ss -tuln | grep 3306
 
-# 把 ~/.local/bin 加到 PATH，并且让当前终端立刻生效
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
+# 更新软件源以确保获取最新包
+sudo apt update && sudo apt upgrade -y
 
-# 验证安装
-claude --version
+# 安装 MySQL Server
+# Ubuntu 默认仓库安装 MySQL 8.x, MySQL 服务会自动启动
+sudo apt install mysql-server -y
+
+# 检查服务是否运行和版本
+sudo systemctl status mysql # 显示 "Active: active (running)"，表示成功。
+mysql --version
+
+# 检查 MySQL 服务的网络状态
+sudo ss -tap | grep mysql
 ```
 
-### 配置 Claude code
-- Linux 的配置文件为 `~/.claude/settings.json`
-```json
-{
-  "env": {
-    "ANTHROPIC_AUTH_TOKEN": "your_zhipu_api_key",
-    "ANTHROPIC_BASE_URL": "https://open.bigmodel.cn/api/anthropic",
-    "API_TIMEOUT_MS": "3000000",
-    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": 1,
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air",
-    "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.7",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-4.7"
-  },
-  "language": "chinese"
-}
+### 配置 MySQL 服务
+> MySQL默认提供的 root 用户是一个无密码的本地用户，用于管理数据库。  
+> Ubuntu 的 MySQL 8+ 使用 auth_socket 插件：它**依赖 Linux 系统权限（sudo）来认证本地 root 访问**。
+
+#### 设置密码
+```bash
+# 以 root 身份登录 MySQL（无需密码）
+sudo mysql
+
+# 设置密码 -> 替换your_password为你自己的密码
+ALTER USER 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY 'your_password';
+# 立即刷新权限表
+FLUSH PRIVILEGES;
+
+# 退出 MySQL, 测试新密码
+exit
+mysql -u root -p
+# 输入刚才设置的密码，成功登录说明密码设置成功
 ```
-- 跳过新手引导: 在`~/.claude.json`中增加 `hasCompletedOnboarding` 参数    
-```json
-{
-  "hasCompletedOnboarding": true
-}
+
+## 安装 Redis
+```bash
+sudo apt update && sudo apt upgrade -y
+
+sudo apt install redis-server -y
+
+sudo systemctl status redis-server
+redis-server --version
+```
+
+### 配置 Redis 服务
+> Redis 默认用户是default，无密码的，为了安全考虑，建议设置密码。
+#### 配置 Redis 密码
+
+##### 遗留密码模式
+```bash
+# 编辑 Redis 配置文件
+sudo nano /etc/redis/redis.conf
+
+# 找到 requirepass 行，取消注释并设置密码
+requirepass your_redis_password
+
+# 重启 Redis 服务
+sudo systemctl restart redis-server
+
+# 测试 Redis
+redis-cli
+
+# 设置了密码，先认证：AUTH your_strong_password
+AUTH your_redis_password
+# 然后测试连接
+ping
+# 如果返回 PONG，说明连接成功
+```
+
+##### ACL 模式
+> ACL配置语法结构:
+>
+> **user <用户名> <状态> <密码规则> <键模式> <频道模式> <命令权限>**
+
+```bash
+# 取消遗留密码模式,编辑 Redis 配置文件 `/etc/redis/redis.conf`, 注释掉 `requirepass` 行
+sudo systemctl restart redis-server
+
+# 创建 ACL 文件（如果不存在）
+sudo touch /etc/redis/users.acl
+
+# 配置 ACL 文件
+sudo nano /etc/redis/users.acl
+# 添加以下内容:
+user default on nopass ~* &* +@all # 允许 default 用户无密码访问所有数据库
+user root on >your_redis_password ~* &* +@all # 允许 root 用户使用密码访问所有数据库
+
+# 编辑 Redis 配置文件 `/etc/redis/redis.conf`, 取消注释 `aclfile` 行, 并设置为 `/etc/redis/users.acl`
+
+# 重启 Redis 服务, 并检查状态
+sudo systemctl restart redis-server
+sudo systemctl status redis-server
+
+# 验证
+redis-cli
+127.0.0.1:6379> AUTH root your_redis_password
+OK
+127.0.0.1:6379> ping
+PONG
+```
+
+## 安装 Nginx
+```bash
+sudo apt update && sudo apt upgrade -y
+
+sudo apt install nginx -y
+
+# 查看服务状态
+sudo systemctl status nginx
+nginx -v
+
+# 测试 Nginx 是否正常工作
+# 浏览器访问http://localhost,看到默认的 "Welcome to nginx!"，即安装完成
+```
+
+## 安装 Java JDK
+
+```bash
+sudo apt update && sudo apt upgrade -y
+
+# 安装 OpenJDK 17 JDK
+sudo apt install openjdk-17-jdk -y
+
+# 在shell的配置文件中添加JDK环境变量
+
+java -version
+javac -version
+
+# 查看所有已安装的 Java 版本
+ls /usr/lib/jvm/
+```
+> [Java JDK 环境变量`JAVA_HOME`配置](./Ubuntu终端配置.md#java-jdk-环境变量java_home配置)
+
+## 安装 Maven
+```bash
+sudo apt update && sudo apt upgrade -y
+
+# 下载 Maven安装包
+cd /tmp
+wget https://dlcdn.apache.org/maven/maven-3/3.9.12/binaries/apache-maven-3.9.12-bin.tar.gz
+
+# 验证文件完整性
+# 下载校验文件
+wget https://dlcdn.apache.org/maven/maven-3/3.9.12/binaries/apache-maven-3.9.12-bin.tar.gz.sha512
+
+# 校验
+echo "$(cat apache-maven-3.9.12-bin.tar.gz.sha512)  apache-maven-3.9.12-bin.tar.gz" | sha512sum -c -
+
+# 解压并安装到系统目录
+sudo mkdir -p /opt/maven
+sudo tar -xzf apache-maven-3.9.12-bin.tar.gz -C /opt/maven --strip-components=1
+
+# 在shell的配置文件中添加Maven环境变量
+
+mvn -v
+```
+> [Maven 环境变量配置](./Ubuntu终端配置.md#maven-环境变量配置)
+
+### 配置 Maven 阿里云镜像加速
+```bash
+sudo mkdir -p /opt/maven/conf
+sudo cp /opt/maven/conf/settings.xml /opt/maven/conf/settings.xml.bak  # 备份
+
+sudo nano /opt/maven/conf/settings.xml
+
+# 找到 <mirrors> 部分替换其内容为以下内容:
+<mirror>
+    <id>aliyunmaven</id>
+    <mirrorOf>*</mirrorOf>
+    <name>阿里云公共仓库</name>
+    <url>https://maven.aliyun.com/repository/public</url>
+</mirror>
+
+# 验证配置
+mvn help:system
+```
+
+### 常用 Maven 命令
+```bash
+mvn -v                    # 查看版本
+mvn clean compile         # 清理并编译
+mvn clean package         # 打包（生成 target/*.jar）
+mvn spring-boot:run       # 直接运行 Spring Boot 项目
+mvn archetype:generate    # 创建新项目骨架
 ```
