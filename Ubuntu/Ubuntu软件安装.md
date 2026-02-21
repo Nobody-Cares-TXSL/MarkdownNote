@@ -425,3 +425,24 @@ mvn clean package         # 打包（生成 target/*.jar）
 mvn spring-boot:run       # 直接运行 Spring Boot 项目
 mvn archetype:generate    # 创建新项目骨架
 ```
+
+
+
+
+
+
+
+
+
+
+
+## 安装 ffmpeg
+> 安装 ffmpeg 用于vs code的视频转GIF
+
+```bash
+sudo apt update && sudo apt upgrade -y
+
+sudo apt install ffmpeg -y
+
+ffmpeg -version
+```
