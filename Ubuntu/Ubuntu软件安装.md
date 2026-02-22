@@ -426,7 +426,44 @@ mvn spring-boot:run       # 直接运行 Spring Boot 项目
 mvn archetype:generate    # 创建新项目骨架
 ```
 
+## 安装 IDEA
+- IDEA: https://www.jetbrains.com/idea/download/?section=linux
 
+```bash
+# 下载 IDEA tar.gz 包
+
+# 解压到 /opt
+sudo tar -xzf ideaIC-2025.2.6.1.tar.gz -C /opt
+
+# 运行 IDE, 用全路径直接运行
+/opt/idea-IC-2025.2.6.1/bin/idea.sh  # 替换为你的实际目录
+
+# 导入配置文件 settings.zip
+
+# 切换原生启动器
+vim ~/.local/share/applications/jetbrains-idea.desktop
+# 将Exec行的 idea.sh 改为 idea
+```
+
+### 配置 Git
+- Git 路径: `/usr/bin/git`
+
+### 配置 Maven
+- Maven主路径: `/opt/maven`
+- 用户配置文件: `/opt/maven/conf/settings.xml`
+> 1. 修改 `settings.xml` 中的 `<mirrors>` 部分, 配置阿里云镜像加速
+>  ```xml
+>  <mirror>
+>         <id>aliyunmaven</id>
+>         <mirrorOf>*</mirrorOf>
+>         <name>阿里云公共仓库</name>
+>         <url>https://maven.aliyun.com/repository/public</url>
+>  </mirror>
+>  ``` 
+> 2. 在 `/opt/maven/` 下创建 `mvn_repo` 文件夹
+> 3. 增加 `<localRepository>/opt/maven/mvn_repo</localRepository>` 在 `<settings>` 标签下
+
+- 本地仓库: `/opt/maven/mvn_repo`
 
 
 
