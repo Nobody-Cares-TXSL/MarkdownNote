@@ -438,7 +438,7 @@ sudo tar -xzf ideaIC-2025.2.6.1.tar.gz -C /opt
 # 运行 IDE, 用全路径直接运行
 /opt/idea-IC-2025.2.6.1/bin/idea.sh  # 替换为你的实际目录
 
-# 导入配置文件 settings.zip
+# 导入配置文件 settings.zip, 并创建桌面启动器
 
 # 切换原生启动器
 vim ~/.local/share/applications/jetbrains-idea.desktop
@@ -465,7 +465,24 @@ vim ~/.local/share/applications/jetbrains-idea.desktop
 
 - 本地仓库: `/opt/maven/mvn_repo`
 
+## 安装 DataGrip
 
+
+```bash
+# 下载 DataGrip tar.gz 包
+
+# 解压到 /opt
+sudo tar -xzf datagrip-2025.3.5.tar.gz -C /opt
+
+# 运行 IDE, 用全路径直接运行
+/opt/DataGrip-2025.3.5/bin/datagrip.sh  # 替换为实际解压目录
+
+# 创建桌面启动器
+
+# 切换原生启动器
+vim ~/.local/share/applications/jetbrains-datagrip.desktop
+# 将Exec行的 datagrip.sh 改为 datagrip
+```
 
 
 
