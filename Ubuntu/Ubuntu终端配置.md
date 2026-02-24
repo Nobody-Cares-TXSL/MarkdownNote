@@ -219,5 +219,12 @@ export PATH="$JAVA_HOME/bin:$PATH"
 ```bash
 # Maven 配置
 export MAVEN_HOME=/opt/maven
-export PATH=$MAVEN_HOME/bin:$PATH
+export PATH="$MAVEN_HOME/bin:$PATH"
+```
+
+## Jmeter 环境变量配置
+```bash
+# Jmeter 配置
+export JMETER_HOME=/opt/jmeter
+export PATH="$JMETER_HOME/bin:$PATH"
 ```

@@ -461,7 +461,7 @@ vim ~/.local/share/applications/jetbrains-idea.desktop
 >  </mirror>
 >  ``` 
 > 2. 在 `/opt/maven/` 下创建 `mvn_repo` 文件夹
-> 3. 增加 `<localRepository>/opt/maven/mvn_repo</localRepository>` 在 `<settings>` 标签下
+> 3. 增加 `<localRepository>~/.m2/repository</localRepository>` 在 `<settings>` 标签下
 
 - 本地仓库: `/opt/maven/mvn_repo`
 
@@ -484,7 +484,23 @@ vim ~/.local/share/applications/jetbrains-datagrip.desktop
 # 将Exec行的 datagrip.sh 改为 datagrip
 ```
 
+## 安装 Jmeter
+- Jmeter: https://dlcdn.apache.org/jmeter/binaries/
 
+```bash
+# 下载 Jmeter tar.gz 包
+wget https://dlcdn.apache.org/jmeter/binaries/apache-jmeter-5.6.3.tgz
+
+# 解压并安装到系统目录
+sudo mkdir -p /opt/jmeter
+sudo tar -xzf apache-jmeter-5.6.3.tgz -C /opt/jmeter --strip-components=1
+
+# 在shell的配置文件中添加Jmeter环境变量
+
+# 验证安装
+jmeter -v
+```
+> [Jmeter 环境变量配置](./Ubuntu终端配置.md#jmeter-环境变量配置)
 
 
 
