@@ -324,6 +324,7 @@ sudo touch /etc/redis/users.acl
 # 配置 ACL 文件
 sudo nano /etc/redis/users.acl
 # 添加以下内容:
+# 注意: 后面的注释不能填写在同一行, 否则会报错, 会导致 ACL 配置失败
 user default on nopass ~* &* +@all # 允许 default 用户无密码访问所有数据库
 user root on >your_redis_password ~* &* +@all # 允许 root 用户使用密码访问所有数据库
 
@@ -460,10 +461,9 @@ vim ~/.local/share/applications/jetbrains-idea.desktop
 >         <url>https://maven.aliyun.com/repository/public</url>
 >  </mirror>
 >  ``` 
-> 2. 在 `/opt/maven/` 下创建 `mvn_repo` 文件夹
-> 3. 增加 `<localRepository>~/.m2/repository</localRepository>` 在 `<settings>` 标签下
+> 2. 增加 `<localRepository>~/.m2/repository</localRepository>` 在 `<settings>` 标签下
 
-- 本地仓库: `/opt/maven/mvn_repo`
+- 本地仓库: `~/.m2/repository`
 
 ## 安装 DataGrip
 
