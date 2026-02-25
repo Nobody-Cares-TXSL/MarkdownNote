@@ -189,6 +189,10 @@ action = "Copy"
 key = "Insert"
 mods = "Shift"
 action = "Paste"
+
+# 设置 Alacritty 为默认终端
+sudo update-alternatives --config x-terminal-emulator
+# 选择 Alacritty 作为默认终端
 ```
 
 # 迁移bash配置到zsh

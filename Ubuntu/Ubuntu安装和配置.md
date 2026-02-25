@@ -108,9 +108,10 @@ sudo snap list
 
 # 卸载所有Snap软件
 sudo snap remove --purge <package-name>
+# 删除顺序: firefox, firmware-updater, snap-store, gnome-42-2204, gtk-common-themes, snapd-desktop-integration, bare, core22, snapd
 
 # 卸载 snapd
-sudo apt purge snapd
+sudo apt autoremove --purge snapd
 
 # 清理残留文件
 sudo rm -rf /var/cache/snapd /var/lib/snapd ~/snap /snap
