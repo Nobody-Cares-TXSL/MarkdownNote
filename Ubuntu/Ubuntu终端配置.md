@@ -232,3 +232,24 @@ export PATH="$MAVEN_HOME/bin:$PATH"
 export JMETER_HOME=/opt/jmeter
 export PATH="$JMETER_HOME/bin:$PATH"
 ```
+
+# 汉化 man 手册
+> manpages-zh 提供常用 Linux 命令的中文手册页
+
+```bash
+# 安装中文手册
+sudo apt install manpages-zh -y
+```
+
+## 使用说明
+
+| 命令 | 说明 |
+|------|------|
+| `man 命令` | 显示中文手册（如有） |
+| `man -L en 命令` | 强制显示英文手册 |
+| `man -L zh_CN 命令` | 强制显示中文手册 |
+
+**注意事项：**
+- 并非所有命令都有中文翻译，部分命令仍会显示英文
+- 中文翻译质量参差不齐，建议对比英文原文理解
+- 如需卸载：`sudo apt remove manpages-zh`
