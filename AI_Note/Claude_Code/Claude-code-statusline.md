@@ -430,3 +430,295 @@ Claude Code - Ready
 Idle
 Agent: None | Idle
 ```
+
+## Linux 下的代码实现
+> 注意该代码是在zsh环境下的
+
+- 修改`~/.claude/settings.json`文件中的`statusLine`配置为：
+```bash
+"statusLine": {
+    "type": "command",
+    "command": "zsh ~/.claude/statusline.zsh"
+  }
+```
+- 创建`~/.claude/statusline.zsh`文件，内容如下：
+```bash
+#!/usr/bin/env zsh
+# Claude Code Status Line Script (zsh version)
+# Three-line status bar with model info, git branch, context usage, AI activity tracking, and agent status
+
+# Ensure UTF-8 encoding
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+setopt SH_WORD_SPLIT NULL_GLOB 2>/dev/null
+
+# Helper function to parse JSON using jq or basic regex
+parse_json_field() {
+    local field="$1"
+    local json="$2"
+
+    if command -v jq &>/dev/null; then
+        echo "$json" | jq -r ".$field // empty" 2>/dev/null
+        return
+    fi
+
+    # Basic regex fallback for simple fields
+    # Handle nested fields like "model.display_name"
+    local current="$json"
+    local part
+    for part in "${(s:.:)field}"; do
+        current=$(echo "$current" | grep -o "\"$part\"[[:space:]]*:[[:space:]]*\"[^\"]*\"" 2>/dev/null | head -1 | sed 's/.*: *"//;s/"$//')
+        if [[ -z "$current" ]]; then
+            break
+        fi
+    done
+    echo "$current"
+}
+
+# Read JSON input from stdin
+local input_json=$(cat)
+
+# Debug directory and file
+local debug_dir="$HOME/.claude"
+mkdir -p "$debug_dir"
+local debug_path="$debug_dir/statusline-debug.json"
+
+# Save to debug file for analysis
+if [[ -n "$input_json" ]]; then
+    echo "$input_json" > "$debug_path"
+fi
+
+# Empty input - show default status
+if [[ -z "$input_json" ]]; then
+    echo "Claude Code - Ready"
+    echo "Idle"
+    echo "Agent: None | Idle"
+    exit 0
+fi
+
+# ========== LINE 1: Basic Status (Model | Git Branch | Context % | Directory) ==========
+local parts=()
+
+# Model name
+local model_display=$(parse_json_field "model.display_name" "$input_json")
+if [[ -n "$model_display" ]]; then
+    parts+=("$model_display")
+fi
+
+# Git branch
+local current_dir=$(parse_json_field "workspace.current_dir" "$input_json")
+if [[ -n "$current_dir" ]]; then
+    local branch=$(git -C "$current_dir" --no-optional-locks branch --show-current 2>/dev/null)
+    if [[ -n "$branch" ]]; then
+        parts+=("branch:$branch")
+    fi
+fi
+
+# Context usage
+local ctx_percent=$(parse_json_field "context_window.used_percentage" "$input_json")
+if [[ -n "$ctx_percent" ]]; then
+    parts+=("ctx:$ctx_percent%")
+fi
+
+# Current directory (shortened)
+if [[ -n "$current_dir" ]]; then
+    local dir_display="$current_dir"
+    # Replace home directory with ~
+    dir_display="${dir_display#$HOME}"
+    if [[ "$dir_display" == "$current_dir" ]]; then
+        dir_display="$current_dir"
+    else
+        dir_display="~$dir_display"
+    fi
+    # Show only last 2 directories if path is too long
+    if [[ ${#dir_display} -gt 30 ]]; then
+        local dir_base=$(dirname "$dir_display")
+        local dir_last=$(basename "$dir_display")
+        local dir_parent=$(basename "$dir_base")
+        dir_display=".../$dir_parent/$dir_last"
+    fi
+    parts+=("dir:$dir_display")
+fi
+
+# Build line1 by joining parts with " | "
+local line1="Claude Code"
+if [[ ${#parts[@]} -gt 0 ]]; then
+    local line1=""
+    local first=1
+    for part in "${parts[@]}"; do
+        if [[ $first -eq 1 ]]; then
+            line1="$part"
+            first=0
+        else
+            line1="$line1 | $part"
+        fi
+    done
+fi
+
+# ========== LINE 2: Recent Activity History ==========
+local recent_activities=()
+
+# Get recent activities from transcript
+local transcript_path=$(parse_json_field "transcript_path" "$input_json")
+if [[ -n "$transcript_path" && -f "$transcript_path" ]]; then
+    # Get last 20 entries, process in reverse
+    local entry_count=0
+    local -a recent_lines
+    while IFS= read -r entry; do
+        recent_lines+=("$entry")
+        ((entry_count++))
+    done < <(tail -n 20 "$transcript_path")
+
+    # Process in reverse order (newest first)
+    for (( i=entry_count; i>=1; i-- )); do
+        local entry="${recent_lines[$i]}"
+
+        # Check for tool_use activities
+        if [[ "$entry" == *"\"type\": \"tool_use\""* || "$entry" == *"\"type\":\"tool_use\""* ]]; then
+            local tool_name=$(echo "$entry" | grep -oE '"name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*:[[:space:]]*//;s/"//g')
+            local activity_text=""
+
+            case "$tool_name" in
+                "Read")
+                    local file=$(echo "$entry" | grep -oE '"file_path"[[:space:]]*:[[:space:]]*"[^"]*"' | sed 's/.*:[[:space:]]*//;s/"//g' | xargs -I{} basename {} 2>/dev/null)
+                    if [[ -n "$file" ]]; then
+                        activity_text="R:$file"
+                    fi
+                    ;;
+                "Grep")
+                    local pattern=$(echo "$entry" | grep -oE '"pattern"[[:space:]]*:[[:space:]]*"[^"]*"' | sed 's/.*:[[:space:]]*//;s/"//g')
+                    if [[ ${#pattern} -gt 15 ]]; then
+                        pattern="${pattern:0:15}.."
+                    fi
+                    activity_text="G:$pattern"
+                    ;;
+                "Bash")
+                    activity_text="B"
+                    ;;
+                "Edit")
+                    local file=$(echo "$entry" | grep -oE '"file_path"[[:space:]]*:[[:space:]]*"[^"]*"' | sed 's/.*:[[:space:]]*//;s/"//g' | xargs -I{} basename {} 2>/dev/null)
+                    if [[ -n "$file" ]]; then
+                        activity_text="E:$file"
+                    fi
+                    ;;
+                "Task")
+                    activity_text="T"
+                    ;;
+            esac
+
+            if [[ -n "$activity_text" && ${#recent_activities[@]} -lt 5 ]]; then
+                recent_activities+=("$activity_text")
+            fi
+        fi
+
+        if [[ ${#recent_activities[@]} -ge 5 ]]; then
+            break
+        fi
+    done
+fi
+
+# Build line2 from recent activities
+local line2="Idle"
+if [[ ${#recent_activities[@]} -gt 0 ]]; then
+    local line2=""
+    local first=1
+    for activity in "${recent_activities[@]}"; do
+        if [[ $first -eq 1 ]]; then
+            line2="$activity"
+            first=0
+        else
+            line2="$line2 > $activity"
+        fi
+    done
+fi
+
+# Check for background tasks
+local task_count=0
+local tasks_dir="$HOME/.claude/tasks"
+if [[ -d "$tasks_dir" ]]; then
+    task_count=$(grep -l '"status"[[:space:]]*:[[:space:]]*"in_progress"' "$tasks_dir"/* 2>/dev/null | wc -l)
+fi
+
+if [[ $task_count -gt 0 ]]; then
+    line2="$line2 | Task*$task_count"
+fi
+
+# ========== LINE 3: Agent Status ==========
+local agent_name="None"
+local agent_status="Idle"
+
+# Check for running agents in tasks directory
+# Auto-detect tasks directory path from transcript path or use common locations
+local tasks_dir=""
+if [[ -n "$transcript_path" && -f "$transcript_path" ]]; then
+    # Extract project path from transcript path
+    # transcript_path format: /home/user/.claude/projects/-path-to-project/session.jsonl
+    local transcript_dir=$(dirname "$transcript_path")
+    local project_dir=$(basename "$transcript_dir")
+    # Look for tasks directory in /tmp/claude-<uid>/<project-dir>/tasks
+    local uid=$(id -u)
+    local possible_tasks_dir="/tmp/claude-$uid/$project_dir/tasks"
+    if [[ -d "$possible_tasks_dir" ]]; then
+        tasks_dir="$possible_tasks_dir"
+    fi
+fi
+
+# Fallback: search in common locations
+if [[ -z "$tasks_dir" ]]; then
+    local uid=$(id -u)
+    for dir in /tmp/claude-$uid/*/tasks; do
+        if [[ -d "$dir" ]]; then
+            tasks_dir="$dir"
+            break
+        fi
+    done
+fi
+
+if [[ -d "$tasks_dir" ]]; then
+    # Get the most recently modified agent file
+    local latest_agent=""
+    local latest_time=0
+    for f in "$tasks_dir"/*.output; do
+        if [[ -L "$f" ]]; then
+            # Get the target file
+            local target=$(readlink -f "$f" 2>/dev/null)
+            if [[ -f "$target" ]]; then
+                # Check if agent is still running (no stop_reason in last line)
+                local last_line=$(tail -1 "$target" 2>/dev/null)
+                if [[ "$last_line" != *'"stop_reason"'* ]]; then
+                    # Agent is running
+                    local mtime=$(stat -c %Y "$f" 2>/dev/null || stat -f %m "$f" 2>/dev/null)
+                    if [[ $mtime -gt $latest_time ]]; then
+                        latest_time=$mtime
+                        latest_agent=$(basename "$f" .output)
+                    fi
+                fi
+            fi
+        fi
+    done
+
+    if [[ -n "$latest_agent" ]]; then
+        # Get agent type from the file
+        local agent_target=$(readlink -f "$tasks_dir/$latest_agent.output" 2>/dev/null)
+        if [[ -f "$agent_target" ]]; then
+            # Try to extract subagent_type from the content
+            local agent_type=$(head -5 "$agent_target" 2>/dev/null | grep -o '"subagent_type":"[^"]*"' | sed 's/"subagent_type":"//;s/"//')
+            if [[ -n "$agent_type" ]]; then
+                agent_name="$agent_type"
+            else
+                agent_name="Agent-${latest_agent:0:6}"
+            fi
+            agent_status="Running"
+        fi
+    fi
+fi
+
+# If no agent info, show idle
+local line3="Agent: $agent_name | $agent_status"
+
+# ========== OUTPUT ALL THREE LINES ==========
+echo "$line1"
+echo "$line2"
+echo "$line3"
+```
