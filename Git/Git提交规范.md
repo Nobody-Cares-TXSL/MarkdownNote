@@ -79,3 +79,45 @@ Footer 用于补充提交的元数据，主要用于 **关联 Issue** 和 **声�
 | **位置** | 必须在 Body 之后，与 Body 之间空一行 |
 | **BREAKING CHANGE** | 冒号后必须有空格，说明内容可多行 |
 | **Issue 关键词** | 区分大小写，后跟 `#` 和 Issue 编号 |
+
+# Git 相关的push命令
+
+## 多平台同时推送
+
+让 `git push` 同时推送到多个平台（如 Gitee + GitHub）：
+
+### 正确流程
+
+```bash
+# 1. 清除所有 pushurl（防止重复）
+git config --unset-all remote.origin.pushurl
+
+# 2. 依次添加各平台的 push URL
+git remote set-url --add --push origin https://gitee.com/用户名/项目名.git
+git remote set-url --add --push origin https://github.com/用户名/项目名.git
+
+# 3. 验证
+git remote -v
+```
+
+### 命令说明
+
+| 命令 | 作用 |
+|:-----|:-----|
+| `git remote set-url <remote> <url>` | 覆盖远程 URL（fetch 和 push） |
+| `git remote set-url --add --push <remote> <url>` | **追加** push URL（不覆盖，会重复） |
+| `git config --unset-all remote.<remote>.pushurl` | 清空所有 push URL |
+
+### 注意事项
+
+- `--add --push` 是追加命令，多次执行会产生重复，必须先用 `--unset-all` 清空
+- fetch URL 通常只需一个（用主要平台）
+- push URL 可以有多个，push 时会依次推送到所有 URL
+
+### 最终效果
+
+```
+origin
+├── fetch:  Gitee
+└── push:   Gitee + GitHub
+```
