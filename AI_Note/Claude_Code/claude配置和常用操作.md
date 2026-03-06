@@ -114,6 +114,16 @@ C:\Users\<用户名>\.claude\settings.json
 | `Shift+Tab` | 循环切换权限模式（含 Plan Mode） |
 | `Tab / Enter` | 接受提示词建议 |
 
+## 上下文成本
+
+| 功能 | 何时加载 | 加载内容 | 上下文成本 |
+|------|----------|----------|-----------|
+| CLAUDE.md | 会话开始 | 完整内容 | 每个请求 |
+| Skills | 会话开始 + 使用时 | 启动时的描述，使用时的完整内容 | 低（每个请求的描述）* |
+| MCP 服务器 | 会话开始 | 所有工具定义和 JSON 架构 | 每个请求 |
+| Subagents | 生成时 | 具有指定 skills 的新鲜上下文 | 与主会话隔离 |
+| Hooks | 触发时 | 无（外部运行） | 零，除非 hook 返回添加为消息的其他上下文 |
+
 ## git bash 终端启动claude code
 ### 修改PowerShell配置文件
 ```powershell

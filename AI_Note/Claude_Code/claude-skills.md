@@ -16,6 +16,8 @@ Skill 既可以被 Claude 在合适场景自动加载，也可以由你通过 /s
 | 插件 | `<plugin>/skills/<skill-name>/SKILL.md` | 启用该插件的项目 |
 
 > 同名冲突时：项目 Skill 会覆盖个人 Skill；如果同时存在 .claude/commands/<name>.md 与 .claude/skills/<name>/SKILL.md，Skill 优先。
+>
+> Skills 和 subagents 按名称覆盖：当相同的名称存在于多个级别时，一个定义根据优先级获胜（**对于 skills 为托管 > 用户 > 项目；对于 subagents 为托管 > CLI 标志 > 项目 > 用户 > plugin**）。
 
 ### SKILL结构
 
@@ -119,6 +121,8 @@ model: sonnet
 ### 子代理运行
 
 当技能需要独立运行时（隔离上下文），在 frontmatter 中设置 `context: fork`。技能内容将作为驱动子代理的提示词，且无法访问你的对话历史。
+
+> 在 subagents 中： **Skills 在 subagents 中的工作方式不同。不是按需加载，而是传递给 subagent 的 skills 在启动时完全预加载到其上下文中。** Subagents 不从主会话继承 skills；您必须明确指定它们。
 
 **配置选项：**
 
