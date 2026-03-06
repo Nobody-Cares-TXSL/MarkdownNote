@@ -1,21 +1,20 @@
 # Git 代理配置
 
-## 一、问题诊断
+## 快速选择
 
-| 现象 | 原因 |
-|------|------|
-| `git clone/push` 超时 | GitHub 受网络限制或代理配置错误 |
-| `Connection closed` | 代理端口不匹配或服务未运行 |
-| `ping github.com` 有丢包 | ICMP 不代表 HTTPS 通 |
-| 设置代理后成功 | 代理隧道绕过限制 |
+| 你的情况 | 用这个 |
+|---------|--------|
+| 偶尔用代理 | 环境变量 |
+| 一直用代理 | git config 或 ~/.ssh/config |
+| 多端口切换 | 环境变量（更灵活） |
+| SSH 协议 (git@github.com) | ~/.ssh/config |
+| SSH 22 端口被封 | ssh.github.com:443 |
 
 ---
 
-## 二、配置方法
+## HTTPS 代理
 
-### 方案 A：环境变量（推荐，灵活）
-
-**优点**：仅当前会话生效，不影响其他操作
+### 环境变量（临时，推荐）
 
 ```bash
 # HTTP/HTTPS 代理
@@ -27,92 +26,63 @@ export https_proxy=http://127.0.0.1:7890 \
 export all_proxy=socks5://127.0.0.1:7890
 ```
 
-### 方案 B：Git 配置（永久，针对特定域名）
-
-**优点**：自动生效，只对指定域名生效
-
-```ini
-# 编辑 ~/.gitconfig
-[http "https://github.com"]
-    proxy = http://127.0.0.1:7890
-[https "https://github.com"]
-    proxy = http://127.0.0.1:7890
-```
-
-或用命令设置：
+### Git 配置（永久）
 
 ```bash
 git config --global http.https://github.com.proxy http://127.0.0.1:7890
 git config --global https.https://github.com.proxy http://127.0.0.1:7890
 ```
 
----
-
-## 三、配置说明
-
-```ini
-# 语法：[协议 "URL匹配"]
-[http "https://github.com"]
-    proxy = http://代理地址:端口
-```
-
-| 配置项 | 说明 |
-|--------|------|
-| 只对 github.com 生效 | 其他 git 操作走直连 |
-| 支持 HTTP/HTTPS/SOCKS5 | 根据代理软件类型选择 |
-| 端口必须与代理软件一致 | 端口不匹配会导致连接失败 |
-
----
-
-## 四、真实案例：端口不匹配
-
-### 问题现象
-
+**取消配置**：
 ```bash
-$ /plugin marketplace add obra/superpowers-marketplace
-Error: Failed to clone marketplace repository
-Connection closed by UNKNOWN port 65535
-```
-
-### 诊断过程
-
-```bash
-# 1. 检查 git 配置
-$ git config --get-regexp "proxy"
-http.https://github.com.proxy=http://127.0.0.1:7897
-https.https://github.com.proxy=http://127.0.0.1:7897
-
-# 2. 测试代理连通性
-$ curl -x http://127.0.0.1:7897 https://github.com --connect-timeout 3
-# 无响应 → 端口 7897 服务未运行
-```
-
-### 根本原因
-
-```
-git 配置的代理端口：7897 ❌
-实际运行的代理端口：7890 ✅
-       端口不匹配 → 连接失败
-```
-
-### 解决方案
-
-```bash
-# 1. 取消错误的 git 配置
 git config --global --unset http.https://github.com.proxy
 git config --global --unset https.https://github.com.proxy
-
-# 2. 使用环境变量设置正确端口
-export https_proxy=http://127.0.0.1:7890 \
-       http_proxy=http://127.0.0.1:7890 \
-       all_proxy=http://127.0.0.1:7890
-
-# 3. 重新执行操作 → 成功 ✓
 ```
 
 ---
 
-## 五、验证命令
+## SSH 代理
+
+### 配置 ~/.ssh/config
+
+```bash
+# SOCKS5 代理（推荐，Clash 默认）
+Host github.com
+    HostName github.com
+    User git
+    ProxyCommand nc -X 5 -x 127.0.0.1:7890 %h %p
+
+# HTTP 代理（二选一，上面注释掉再启用这个）
+# Host github.com
+#     HostName github.com
+#     User git
+#     ProxyCommand nc -X connect -x 127.0.0.1:7890 %h %p
+
+# 备用：HTTPS 443 端口（22 端口被封时）
+Host ssh.github.com
+    Hostname ssh.github.com
+    Port 443
+    User git
+```
+
+**参数说明**：
+| 参数 | 说明 |
+|------|------|
+| `-X 5` | SOCKS5 协议 |
+| `-X connect` | HTTP CONNECT 协议 |
+| `-x 地址:端口` | 代理服务器地址 |
+| `%h %p` | 自动替换为目标主机和端口 |
+
+**使用备用端口**：
+```bash
+git clone ssh://git@ssh.github.com:443/user/repo.git
+```
+
+---
+
+## 验证命令
+
+### HTTPS 协议
 
 ```bash
 # 基础连接测试
@@ -128,38 +98,62 @@ git config --get-regexp "proxy"
 curl -x http://127.0.0.1:端口 https://github.com --connect-timeout 3
 ```
 
----
-
-## 六、常见问题
-
-| 问题 | 解决 |
-|------|------|
-| 代理端口不通 | 检查代理软件是否开启，端口是否正确 |
-| 配置不生效 | 确认 URL 匹配规则，检查配置是否写入 ~/.gitconfig |
-| 端口配置错误 | 对比代理软件实际端口，更新配置 |
-| 其他仓库也走代理 | 添加对应的 URL 配置或使用环境变量 |
-| 不想用代理了 | 见下方"取消代理" |
-
----
-
-## 七、取消代理
+### SSH 协议
 
 ```bash
-# 方案 A：删除 git 配置
-git config --global --unset http.https://github.com.proxy
-git config --global --unset https.https://github.com.proxy
+# 测试 SSH 连接
+ssh -T git@github.com
 
-# 方案 B：临时取消环境变量
-unset https_proxy http_proxy all_proxy
+# 测试备用 443 端口
+ssh -T -p 443 git@ssh.github.com
+
+# 查看 SSH 配置
+cat ~/.ssh/config
+
+# 详细调试日志
+ssh -Tv git@github.com
 ```
 
 ---
 
-## 八、快速参考
+## 故障排查
 
-| 场景 | 推荐方案 |
-|------|---------|
-| 偶尔需要代理 | 环境变量 |
-| 持续需要代理 | git config + 环境变量 |
-| 多端口切换 | 环境变量（更灵活） |
-| 某个仓库专用代理 | git config 指定 URL |
+| 问题 | 解决 |
+|------|------|
+| 连接超时 | 检查代理软件是否开启、端口是否正确 |
+| 配置不生效 | 检查 `~/.gitconfig` 是否写入成功 |
+| 端口配置错误 | 对比代理软件实际端口，更新配置 |
+| SSH 连接超时 | 检查 `~/.ssh/config` 中的 ProxyCommand 端口 |
+| SSH 22 端口被封 | 使用 ssh.github.com:443 |
+| nc 命令不存在 | `sudo apt install netcat` |
+
+### 真实案例：端口不匹配
+
+**问题**：
+```bash
+Connection closed by UNKNOWN port 65535
+```
+
+**诊断**：
+```bash
+# 检查 git 配置
+git config --get-regexp "proxy"
+
+# 测试代理连通性
+curl -x http://127.0.0.1:端口 https://github.com --connect-timeout 3
+```
+
+**解决**：端口不匹配时，更新为正确端口或使用环境变量。
+
+---
+
+## 取消代理
+
+```bash
+# 取消 git 配置
+git config --global --unset http.https://github.com.proxy
+git config --global --unset https.https://github.com.proxy
+
+# 取消环境变量
+unset https_proxy http_proxy all_proxy
+```
