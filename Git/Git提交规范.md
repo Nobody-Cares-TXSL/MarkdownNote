@@ -121,3 +121,55 @@ origin
 ├── fetch:  Gitee
 └── push:   Gitee + GitHub
 ```
+
+---
+
+# Git 提交操作命令速查
+
+## 一、状态查看
+
+| 命令 | 说明 |
+|:-----|:-----|
+| `git status` | 查看当前文件状态 |
+| `git status -s` | 简洁输出（??未跟踪、A已暂存、M已修改） |
+
+**状态说明：**
+- `Untracked files` - 未跟踪
+- `Changes not staged for commit` - 已跟踪但未暂存
+- `Changes to be committed` - 已暂存
+
+## 二、暂存操作
+
+| 命令 | 说明 |
+|:-----|:-----|
+| `git add <file>` | 跟踪新文件或暂存已修改文件 |
+| `git add .` | 暂存当前目录所有修改 |
+| `git reset HEAD <file>` | 取消暂存文件 |
+| `git restore --staged <file>` | 取消暂存文件（Git 2.23+） |
+
+## 三、差异对比
+
+| 命令 | 说明 |
+|:-----|:-----|
+| `git diff` | 工作区 vs 暂存区 |
+| `git diff --staged` | 暂存区 vs 本地仓库 |
+| `git diff --cached` | 同 `--staged` |
+| `git diff <commit>` | 工作区 vs 指定提交 |
+
+## 四、提交操作
+
+| 命令 | 说明 |
+|:-----|:-----|
+| `git commit -m "message"` | 提交暂存区 |
+| `git commit -a -m "message"` | 跳过暂存，直接提交已跟踪文件 |
+| `git commit --amend` | 修改最后一次提交信息 |
+| `git commit --amend --no-edit` | 合并暂存区到最后一次提交（不修改信息） |
+
+## 五、文件操作
+
+| 命令 | 说明 |
+|:-----|:-----|
+| `git rm <file>` | 删除文件并暂存删除操作 |
+| `git rm --cached <file>` | 从暂存区移除，保留工作区文件 |
+| `git mv <old> <new>` | 重命名文件（自动跟踪） |
+| `git restore <file>` | 撤销工作区修改（恢复到暂存区或上次提交） |

@@ -6,7 +6,7 @@
 
 | 目录 | 内容 |
 |------|------|
-| [Git/](Git/) | Git 相关操作和配置 |
+| [Git/](Git/) | Git 配置、分支、忽略文件、提交规范、GitFlow、标签、代理、Worktrees |
 | [Ubuntu/](Ubuntu/) | Linux 系统管理和命令 |
 | [Java/](Java/) | Java 和 Spring Boot 开发 |
 | [Web/](Web/) | 前端技术（Vue、CSS、ES6） |
