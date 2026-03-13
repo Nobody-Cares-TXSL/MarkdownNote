@@ -69,7 +69,64 @@ git config --global core.quotepath false
 
 这是 Git 对"不可打印字符"的保守处理策略。设置为 `false` 后，中文文件名可以正常显示。
 
-### 3.4 编辑器配置
+### 3.4 换行符处理
+
+| 系统 | 换行符 | 表示 |
+|:-----|:-------|:-----|
+| Linux/Mac | LF | `\n` |
+| Windows | CRLF | `\r\n` |
+
+跨平台协作时，换行符自动转换会导致文件显示"已修改"。
+
+#### 方案一：core.autocrlf
+
+```bash
+# Linux/Mac 推荐
+git config --global core.autocrlf input
+
+# Windows 推荐
+git config --global core.autocrlf true
+
+# 禁用自动转换（配合 .gitattributes 使用）
+git config --global core.autocrlf false
+```
+
+| 值 | 提交到仓库 | 检出到工作区 | 适用场景 |
+|:---|:------|:------|:---------|
+| `true` | CRLF → LF | LF → CRLF | Windows 独立开发 |
+| `input` | CRLF → LF | 保持不变 | Linux/Mac 开发 |
+| `false` | 不转换 | 不转换 | 配合 .gitattributes |
+
+#### 方案二：.gitattributes（推荐）
+
+项目级统一规范，优先级高于 `core.autocrlf`。
+
+在项目根目录创建 `.gitattributes`：
+
+```
+* text=auto eol=lf          # 文本文件统一用 LF
+*.bat text eol=crlf         # Windows 脚本必须用 CRLF
+*.png binary                # 二进制文件不转换
+```
+
+| 属性 | 含义 |
+|:-----|:-----|
+| `text=auto` | 自动判断是否为文本文件 |
+| `eol=lf/crlf` | 强制使用指定换行符 |
+| `binary` | 二进制文件，不转换 |
+
+配合 `.gitattributes`，设置 `core.autocrlf false` 禁用自动转换。
+
+```bash
+# 规范化已有文件
+git add --renormalize .
+git commit -m "chore: normalize line endings to LF"
+
+# 验证文件换行符
+git ls-files --eol README.md
+```
+
+### 3.5 编辑器配置
 
 ```bash
 # 设置默认编辑器为 Vim
@@ -91,7 +148,7 @@ git config --global core.editor nano
 | `core.editor` | 默认编辑器 | `vim` |
 | `core.quotepath` | 是否转义非ASCII字符 | `false` |
 | `init.defaultBranch` | 默认分支名 | `main` |
-| `core.autocrlf` | 换行符转换（Windows用`true`，Mac/Linux用`input`） | `input` |
+| `core.autocrlf` | 换行符转换 | `false`（配合.gitattributes） |
 | `push.default` | 默认推送行为 | `simple` |
 
 ## 五、获取帮助
