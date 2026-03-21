@@ -91,6 +91,7 @@ C:\Users\<用户名>\.claude\settings.json
 | `/memory` | 查看/管理持久内存 |
 | `/btw` | 快速问题，不占用上下文 |
 | `@file` | 快速把文件/目录拉进上下文 |
+| `/config` | 配置输出样式、模型、权限等 |
 
 ### 常用 CLI 参数
 
@@ -126,6 +127,69 @@ C:\Users\<用户名>\.claude\settings.json
 | MCP 服务器 | 会话开始 | 所有工具定义和 JSON 架构 | 每个请求 |
 | Subagents | 生成时 | 具有指定 skills 的新鲜上下文 | 与主会话隔离 |
 | Hooks | 触发时 | 无（外部运行） | 零，除非 hook 返回添加为消息的其他上下文 |
+
+## 输出样式
+
+输出样式将 Claude Code 适配用于不同用途，修改系统提示以改变响应方式。
+
+### 内置样式
+
+| 样式 | 说明 | 适用场景 |
+|------|------|---------|
+| **Default** | 默认软件工程模式 | 高效完成编码任务 |
+| **Explanatory** | 提供教育性 insights | 理解实现选择和代码库模式 |
+| **Learning** | 边学边做，添加 `TODO(human)` | 主动学习、协作编程 |
+
+### 更改样式
+
+```bash
+/config  # 菜单选择
+```
+
+或编辑 `.claude/settings.local.json`：
+
+```json
+{
+  "outputStyle": "Explanatory"
+}
+```
+
+> 更改需重启会话生效，以便 prompt caching 降低延迟
+
+### 自定义样式
+
+创建 Markdown 文件，位置：
+- 用户级：`~/.claude/output-styles/<name>.md`
+- 项目级：`.claude/output-styles/<name>.md`
+
+```markdown
+---
+name: My Style
+description: 简要描述
+keep-coding-instructions: false
+---
+
+# 自定义指令
+
+[你的自定义说明...]
+```
+
+**Frontmatter 字段：**
+
+| 字段 | 说明 | 默认值 |
+|------|------|--------|
+| `name` | 输出样式的名称，如果不是文件名 | 从文件名继承 |
+| `description` | 输出样式的描述，在 `/config` 选择器中显示 | 无 |
+| `keep-coding-instructions` | 是否保留 Claude Code 系统提示中与编码相关的部分 | false |
+
+### 功能对比
+
+| 功能 | 作用 | 范围 |
+|------|------|------|
+| **输出样式** | 修改系统提示，改变响应方式 | 全局始终生效 |
+| **CLAUDE.md** | 项目级用户消息 | 当前项目 |
+| **Skills** | 可调用任务提示 | 按需加载 |
+| **Agents** | 特定任务处理器 | 按需调用 |
 
 ## git bash 终端启动claude code
 ### 修改PowerShell配置文件
