@@ -88,6 +88,8 @@ C:\Users\<用户名>\.claude\settings.json
 | `/insights` | 生成 Claude Code 的洞察 HTML 报告 |
 | `/plugin marketplace list` | 列出所有已添加的市场 |
 | `/terminal-setup` | 启用便捷的终端集成功能，例如支持按 Shift + Enter 换行 |
+| `/memory` | 查看/管理持久内存 |
+| `/btw` | 快速问题，不占用上下文 |
 | `@file` | 快速把文件/目录拉进上下文 |
 
 ### 常用 CLI 参数
@@ -111,6 +113,7 @@ C:\Users\<用户名>\.claude\settings.json
 | `Ctrl+R` | 反向搜索历史提示词 |
 | `Ctrl+S` | 暂存当前提示词草稿 |
 | `Ctrl+U` | 删除整行 |
+| `Alt+T` | 思考模式开关 |
 | `Shift+Tab` | 循环切换权限模式（含 Plan Mode） |
 | `Tab / Enter` | 接受提示词建议 |
 
