@@ -4,6 +4,16 @@
 
 Skill 既可以被 Claude 在合适场景自动加载，也可以由你通过 /skill-name 手动调用。
 
+## 捆绑 skills
+
+| Skill | 功能 | 使用场景 |
+|-------|------|---------|
+| `/simplify` | 并行审查代码重用、质量、效率并修复 | 功能/bug 修复后清理代码 |
+| `/batch <instruction>` | 大规模并行修改代码库，拆分为 5-30 个单元在独立 worktree 中执行 | 需要修改大量文件，如框架迁移 |
+| `/debug [description]` | 读取会话调试日志排查问题 | Claude Code 会话异常时 |
+| `/loop [interval] <prompt>` | 按间隔重复运行提示（cron 任务） | 轮询部署、监控 PR |
+| `/claude-api` | 加载 Claude API/Agent SDK 参考资料及示例 | 使用 Claude API 或导入相关 SDK 时 |
+
 ### Skills 放在哪里（作用域与优先级）
 
 存放位置决定谁可以使用：
@@ -129,7 +139,7 @@ model: sonnet
 | 字段 | 说明 | 可选值 |
 |------|------|--------|
 | `context: fork` | 启用子代理隔离模式 | 固定值 |
-| `agent` | 指定子代理类型 | `Explore`、`Plan`、`general-purpose` 或自定义 |
+| `agent` | 指定子代理类型 | `Explore`、`Plan`、`general-purpose` 或自定义(省略则使用 general-purpose) |
 
 > [子代理参考](./claude-Subagents.md)
 
