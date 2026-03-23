@@ -50,7 +50,7 @@
 | `maxTurns` | ❌ | subagent 停止前的最大轮数 |
 | `skills` | ❌ | 启动时加载的 Skills（注入完整内容，不继承父对话技能） |
 | `mcpServers` | ❌ | 可用的 MCP servers（引用名称或内联定义） |
-| `hooks` | ❌ | 限定于此 subagent 的生命周期 hooks |
+| `hooks` | ❌ | 限定于此 subagent 的生命周期 hooks （参考：[Hooks 文档](./claude-Hooks系统.md#skills-和-subagents-中的-hooks)）|
 | `memory` | ❌ | 持久内存范围：`user`/`project`/`local`，启用跨会话学习 |
 | `background` | ❌ | 设为 `true` 始终作为后台任务运行，默认 `false` |
 | `isolation` | ❌ | 设为 `worktree` 在临时 git worktree 中运行（无更改自动清理） |
@@ -72,20 +72,7 @@
 
 > **用途**：快速测试或自动化脚本（仅当前会话有效，不保存到磁盘）
 
-### 基本语法
-
-```bash
-claude --agents '{
-  "subagent-name": {
-    "description": "简短描述",
-    "prompt": "系统提示内容",
-    "tools": ["Read", "Grep"],
-    "model": "sonnet"
-  }
-}'
-```
-
-### 完整示例
+### 示例
 
 ```bash
 claude --agents '{
@@ -94,6 +81,10 @@ claude --agents '{
     "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
     "tools": ["Read", "Grep", "Glob", "Bash"],
     "model": "sonnet"
+  },
+  "debugger": {
+    "description": "Debugging specialist for errors and test failures.",
+    "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
   }
 }'
 ```
@@ -102,9 +93,20 @@ claude --agents '{
 
 `--agents` 标志接受与基于文件的 subagents 相同的 frontmatter 字段的 JSON。
 
+| 字段 | 必需 | 描述 |
+|------|:----:|------|
+| `description` | 是 | 何时应调用 subagent 的自然语言描述 |
+| `prompt` | 是 | 指导 subagent 行为的系统提示 |
+| `tools` | 否 | 可用工具数组，如 `["Read", "Edit", "Bash"]`。省略则继承全部 |
+| `disallowedTools` | 否 | 明确拒绝的工具名称数组 |
+| `model` | 否 | 模型别名：`sonnet`/`opus`/`haiku`/`inherit`（默认） |
+| `skills` | 否 | 预加载到上下文的 skill 名称数组 |
+| `mcpServers` | 否 | MCP servers 数组（服务器名或 `{name: config}` 对象） |
+| `maxTurns` | 否 | subagent 停止前的最大代理转数 |
+
 ---
 
-## 限制 Subagent 生成
+## 限制 Subagent 生成 (Agent(agent_type) 语法)
 
 > **适用范围**：仅限 `claude --agent` 启动的**主线程代理**
 

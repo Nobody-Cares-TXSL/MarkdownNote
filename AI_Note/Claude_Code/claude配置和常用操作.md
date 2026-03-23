@@ -73,25 +73,37 @@ C:\Users\<用户名>\.claude\settings.json
 
 ## 常用操作
 
+### 快速命令
+
+| 快捷键 | 描述 | 注释 |
+|--------|------|------|
+| `/` 在开始 | 命令或 skill | 参考内置命令和 skills |
+| `!` 在开始 | Bash 模式 | 直接运行命令并将输出添加到会话 |
+| `@` | 文件路径提及 | 触发文件路径自动完成 |
+
 ### 常用命令
 
 | 命令 | 说明 |
 |------|------|
 | `/clear` | 清空对话历史 |
-| `/init` | 生成/更新 CLAUDE.md，让 Claude 了解项目 |
+| `/init` | 生成/更新 `CLAUDE.md`，让 Claude 了解项目 |
 | `/model` | 切换模型 |
-| `/rename` | 给当前会话命名 |
+| `/rename [name]` | 给当前会话命名 |
+| `/resume [session]` | 按 ID 或名称恢复对话 |
 | `/compact` | 压缩/总结当前上下文 |
-| `/export` | 导出会话为 Markdown |
 | `/context` | 查看上下文/Token 占用 |
 | `/stats` | 查看使用统计 |
+| `/diff` | 交互式差异查看器 |
+| `/copy` | 复制最新的输出内容到剪贴板 |
+| `/export [filename]` | 导出会话 |
 | `/insights` | 生成 Claude Code 的洞察 HTML 报告 |
 | `/plugin marketplace list` | 列出所有已添加的市场 |
 | `/terminal-setup` | 启用便捷的终端集成功能，例如支持按 Shift + Enter 换行 |
 | `/memory` | 查看/管理持久内存 |
 | `/btw` | 快速问题，不占用上下文 |
-| `@file` | 快速把文件/目录拉进上下文 |
+| `/add-dir <path>` | 将新的工作目录添加到当前会话 |
 | `/config` | 配置输出样式、模型、权限等 |
+| `/fork [name]` | 创建当前会话的分支会话 |
 
 ### 常用 CLI 参数
 

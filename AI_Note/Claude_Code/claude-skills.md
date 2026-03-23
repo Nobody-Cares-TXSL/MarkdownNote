@@ -82,7 +82,7 @@ description: 简要描述         # (必填)`[做什么] + [何时使用] + [关
 | `model` | Skill 激活时使用的模型 |
 | `context` | 设为 `fork` 时在隔离的子代理上下文运行 |
 | `agent` | `context: fork` 时选择子代理类型（例如 Explore、Plan） |
-| `hooks` | 仅对该 Skill 生效的 hooks（格式见 Hooks 文档） |
+| `hooks` | 仅对该 Skill 生效的 hooks（参考：[Hooks 文档](./claude-Hooks系统.md##skills-和-subagents-中的-hooks)） |
 | `license` | 许可证名称或捆绑许可证文件的引用 |
 | `compatibility` | 最多 500 个字符。指示环境要求（预期产品、系统包、网络访问等） |
 | `metadata` | 用于附加元数据的任意键值映射 |
