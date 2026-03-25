@@ -253,3 +253,35 @@ sudo apt install manpages-zh -y
 - 并非所有命令都有中文翻译，部分命令仍会显示英文
 - 中文翻译质量参差不齐，建议对比英文原文理解
 - 如需卸载：`sudo apt remove manpages-zh`
+
+# 终端扩展
+
+## lazygit
+
+```bash
+# 1. 查询 lazygit 最新版本号
+# 利用 GitHub API 获取最新 release 的 tag，例如 "v0.42.0"，然后去掉前面的 'v'，只保留数字版本号
+LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": *"v\K[^"]*')
+
+# 2. 下载对应版本的 lazygit 预编译二进制压缩包
+# -L 让 curl 跟随重定向；-o 指定输出文件名；这里下载的是 Linux x86_64 版本的 tar.gz 包
+curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+
+# 3. 解压出 lazygit 可执行文件
+# tar xf 表示解压文件；只解压出 lazygit 这一个文件，避免把压缩包里其他内容都展开到当前目录
+tar xf lazygit.tar.gz lazygit
+
+# 4. 将 lazygit 安装到系统命令目录
+# install 命令用于安装可执行文件：
+#   第一个 lazygit 是源文件
+#   -D 表示必要时自动创建目标目录的父目录
+#   -t /usr/local/bin/ 指定安装目录，这个目录默认就在 PATH 中，方便在任意位置直接运行 lazygit
+sudo install lazygit -D -t /usr/local/bin/
+
+# 5. 清理下载的压缩包和临时二进制文件
+rm -f lazygit.tar.gz lazygit
+
+# 6. 验证是否安装成功
+# 如果正常输出版本号，说明 lazygit 已经可以被系统识别并运行
+lazygit --version
+```
