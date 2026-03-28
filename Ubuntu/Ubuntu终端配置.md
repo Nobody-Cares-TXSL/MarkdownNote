@@ -285,3 +285,127 @@ rm -f lazygit.tar.gz lazygit
 # 如果正常输出版本号，说明 lazygit 已经可以被系统识别并运行
 lazygit --version
 ```
+
+## yazi
+> yazi 是终端文件管理器
+
+```bash
+# 安装必要的依赖
+sudo apt update
+sudo apt install -y ffmpegthumbnailer 7zip jq poppler-utils fd-find ripgrep fzf zoxide imagemagick
+
+# 进入下载目录
+cd ~/下载
+
+# 下载 x86_64 的 Linux 压缩包
+wget https://github.com/sxyazi/yazi/releases/latest/download/yazi-x86_64-unknown-linux-gnu.zip
+
+# 安装 unzip（如果还没装）
+sudo apt install unzip -y
+
+# 解压
+unzip yazi-x86_64-unknown-linux-gnu.zip
+
+# 进入解压后的文件夹
+cd yazi-x86_64-unknown-linux-gnu
+
+# 将 yazi 和 ya (辅助工具) 移动到 /usr/local/bin
+sudo cp yazi ya /usr/local/bin/
+
+# 给执行权限
+sudo chmod +x /usr/local/bin/yazi /usr/local/bin/ya
+```
+
+### 配置 yazi
+- yazi 官网文档 ： https://yazi-rs.github.io/docs/installation
+
+```bash
+nano ~/.zshrc
+
+# 退出 yazi 后, 切换到 yazi 所在目录
+function y() {
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+    yazi "$@" --cwd-file="$tmp"
+    if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+        builtin cd -- "$cwd"
+    fi
+    rm -f -- "$tmp"
+}
+
+source ~/.zshrc
+```
+> 之后, 可以在终端中使用 `y` 命令启动 yazi
+
+### 修复图标显示问题
+> 如果 yazi 图标显示异常, 可以尝试以下方法修复:
+
+```bash
+# 创建字体目录
+mkdir -p ~/.local/share/fonts
+
+# 进入下载目录
+cd ~/下载
+
+# 下载 FiraCode Nerd Font (只下载 Regular 和 Bold 即可，体积小)
+wget https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip
+
+# 解压到字体目录
+unzip FiraCode.zip -d ~/.local/share/fonts
+
+# 刷新系统字体缓存
+fc-cache -fv
+
+# 配置 alacritty 字体
+nano ~/.config/alacritty/alacritty.toml
+
+[font]
+normal.family = "FiraCode Nerd Font"
+bold.family = "FiraCode Nerd Font"
+italic.family = "FiraCode Nerd Font"
+size = 12.0
+```
+
+### 图片视频预览
+```bash
+# 1. 添加软件源
+echo 'deb http://download.opensuse.org/repositories/home:/justkidding/xUbuntu_24.04/ /' | sudo tee /etc/apt/sources.list.d/home:justkidding.list
+
+# 2. 添加密钥 (如果 curl 失败请检查你的代理设置)
+curl -fsSL https://download.opensuse.org/repositories/home:/justkidding/xUbuntu_24.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_justkidding.gpg > /dev/null
+
+# 3. 更新并安装
+sudo apt update
+sudo apt install ueberzugpp -y
+
+# 4. 验证（现在应该能看到版本号了）
+ueberzugpp --version
+
+# 视频预览 (ffmpegthumbnailer)
+sudo apt install ffmpegthumbnailer -y
+
+# PDF 预览 (poppler-utils)
+sudo apt install poppler-utils -y
+
+# 必须做：让 Yazi 认得 ImageMagick
+sudo ln -sf /usr/bin/convert /usr/local/bin/magick
+```
+- 配置 yazi config文件
+```
+[manager]
+show_hidden = true
+
+[preview]
+# 关键：X11 下 Alacritty 必须用 ueberzug
+preview_proto = "ueberzug"
+max_width = 1200
+max_height = 1200
+cache_dir = "~/.cache/yazi"
+
+
+[plugin]
+previewers = [
+    { mime = "image/*", run = "image" },
+    { mime = "video/*", run = "video" },
+    { mime = "application/pdf", run = "pdf" },
+]
+```
