@@ -404,8 +404,23 @@ cache_dir = "~/.cache/yazi"
 
 [plugin]
 previewers = [
+    # 1. 图片、视频、PDF (你之前配好的)
     { mime = "image/*", run = "image" },
     { mime = "video/*", run = "video" },
     { mime = "application/pdf", run = "pdf" },
+
+    # 2. 高亮显示代码/文本 (解决 Markdown, Python, JSON 等)
+    # Yazi 内置了 "code" 插件来处理带语法高亮的文本
+    { mime = "text/*", run = "code" },
+    { mime = "application/javascript", run = "code" },
+    { mime = "application/json", run = "code" },
+    
+    # 3. 压缩包预览
+    { mime = "application/x-7z-compressed", run = "archive" },
+    { mime = "application/zip", run = "archive" },
+    { mime = "application/x-tar", run = "archive" },
+
+    # 4. 兜底规则：如果以上都不匹配，尝试作为文本显示
+    { name = "*", run = "code" },
 ]
 ```
