@@ -424,3 +424,54 @@ previewers = [
     { name = "*", run = "code" },
 ]
 ```
+
+## glow
+> glow 是终端 Markdown 阅读器，提供精美的渲染效果
+
+```bash
+# 1. 创建密钥目录
+sudo mkdir -p /etc/apt/keyrings
+
+# 2. 下载并添加 Charm 官方 GPG 密钥
+curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
+
+# 3. 添加 Charm 软件源
+echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list
+
+# 4. 更新软件列表并安装
+sudo apt update
+sudo apt install glow
+
+# 5. 验证安装
+glow --version
+```
+
+**使用说明：**
+
+| 命令 | 说明 |
+|------|------|
+| `glow` | 交互式选择当前目录下的 Markdown 文件 |
+| `glow 文件名.md` | 直接渲染指定文件 |
+| `glow -p` | 从 stdin 读取并渲染 |
+
+## btop
+> btop 是终端系统资源监控工具，提供炫酷的可视化界面
+
+```bash
+# 安装 btop（Ubuntu 24.04 官方源已包含）
+sudo apt update
+sudo apt install btop
+
+# 验证安装
+btop --version
+```
+
+**使用说明：**
+
+| 操作 | 说明 |
+|------|------|
+| `btop` | 启动监控界面 |
+| `q` | 退出 btop |
+| 鼠标点击 | 切换选中项 |
+
+> 注意：btop 需要交互式终端，不能在非交互式环境中运行
