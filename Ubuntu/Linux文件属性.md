@@ -131,3 +131,54 @@ chmod u=rwx,g=rx,o=r test1   # 设定权限为 -rwxr-xr--
 chmod a-x test1               # 除去所有人的可执行权限
 chmod u+w test1               # 给属主增加写权限
 ```
+
+## 链接（Link）
+
+每个文件在磁盘上都有一个唯一的 **inode（索引节点）**，保存文件的元数据。链接的本质就是给同一个 inode 起多个名字。
+
+### 硬链接（Hard Link）
+
+直接指向同一个 inode，多个文件名共享相同的数据块。修改或删除任意一个，其余链接不受影响。
+
+```bash
+ln 源文件 硬链接名
+```
+
+```bash
+ls -li original.txt hardlink.txt
+# 12345678 -rw-r--r-- 2 user user 6 ... hardlink.txt
+# 12345678 -rw-r--r-- 2 user user 6 ... original.txt
+# inode 相同，硬链接数变为 2
+```
+
+**限制**：不能跨文件系统、不能链接目录、不能链接不存在的文件。
+
+### 软链接（Symbolic Link）
+
+独立的文件，有自己的 inode，内容是指向目标文件的路径字符串（类似 Windows 快捷方式）。目标删除后链接失效（broken link）。
+
+```bash
+ln -s 源文件 软链接名
+```
+
+```bash
+ls -li original.txt softlink.txt
+# 12345678 -rw-r--r-- 1 user user  6 ... original.txt
+# 87654321 lrwxrwxrwx 1 user user 12 ... softlink.txt -> original.txt
+# inode 不同，文件类型为 l（link）
+
+readlink softlink.txt    # 查看软链接指向的路径
+```
+
+### 硬链接 vs 软链接
+
+| 项目 | 硬链接 | 软链接 |
+|------|--------|--------|
+| 共享 inode | 是 | 否（各自独立） |
+| 跨文件系统 | 不可以 | 可以 |
+| 链接目录 | 不可以 | 可以 |
+| 目标删除后 | 链接依然可用 | 变成 broken link |
+| `ls -l` 显示 | 普通文件 | `l` 类型，带 `->` 箭头 |
+| 典型用途 | 备份防误删 | 版本切换、快捷方式 |
+
+> 生产环境推荐用**绝对路径**创建软链接，避免移动后失效。
