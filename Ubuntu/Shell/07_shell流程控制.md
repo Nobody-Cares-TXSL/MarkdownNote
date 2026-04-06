@@ -71,6 +71,20 @@ for f in *.txt; do echo "$f"; done            # 遍历文件
 for i in $(seq 1 10); do echo "$i"; done      # seq 生成数字序列
 ```
 
+### 条件过滤（循环中跳过匹配项）
+
+```bash
+orig_files=()
+for f in "${files[@]}"; do
+    [[ "$f" == *_compressed* ]] && continue   # 跳过含 _compressed 的文件
+    [[ "$f" == *.bak ]] && continue            # 跳过备份文件
+    orig_files+=("$f")
+done
+```
+
+- `[[ "$f" == pattern ]]` — 通配符匹配，`==` 在 `[[ ]]` 中支持模式
+- `&& continue` — 匹配则跳过，简洁的单行写法
+
 ---
 
 ## while 循环

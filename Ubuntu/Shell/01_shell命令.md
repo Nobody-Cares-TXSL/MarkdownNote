@@ -165,3 +165,113 @@ test EXPRESSION
 # (( )) 专为数值比较
 (( count > 10 ))               # 比 [ $count -gt 10 ] 更直观
 ```
+
+---
+
+## basename / dirname — 路径拆分
+
+```bash
+f="/home/duan/project/docs/readme.md"
+
+basename "$f"     # readme.md      — 提取文件名
+dirname "$f"      # /home/duan/project/docs  — 提取目录部分
+```
+
+- `basename` — 从路径中提取文件名，去掉目录前缀
+- `dirname` — 提取目录部分，去掉文件名
+- 常用于日志输出或显示时只保留文件名，保持简洁
+
+```bash
+DIR="$(cd "$(dirname "$0")" && pwd)"
+```
+
+### 逐层拆解
+
+| 层级 | 代码 | 作用 |
+|------|------|------|
+| 1 | `$0` | 当前脚本路径（可能是相对路径，如 `./scripts/setup.sh`） |
+| 2 | `dirname "$0"` | 提取目录部分（`./scripts`），文件名时返回 `.` |
+| 3 | `cd "$(dirname "$0")"` | 进入脚本所在目录 |
+| 4 | `&& pwd` | cd 成功后获取绝对路径 |
+
+### 效果
+
+`DIR` 获得脚本所在目录的**绝对路径**，无论从哪里运行脚本。
+
+### 要点
+
+- 获取"脚本自身所在目录"的惯用模式，几乎所有健壮脚本都会用到
+- 外层双引号和 `$()` 可安全嵌套——每个 `$()` 开启新的引用上下文
+- 比 `readlink -f` 兼容性更好，不依赖 GNU coreutils
+
+---
+
+## shopt -s nullglob — 通配符无匹配时返回空
+
+```bash
+shopt -s nullglob   # 开启
+shopt -u nullglob   # 关闭
+```
+
+**作用**：通配符匹配不到文件时返回**空**，而非保留原始模式字符串。
+
+```bash
+# 目录下没有 .xyz 文件时
+echo *.xyz          # 默认输出: *.xyz（原样返回）
+shopt -s nullglob
+echo *.xyz          # 输出: （空）
+```
+
+### 典型场景
+
+```bash
+shopt -s nullglob
+for f in /var/log/*.log; do
+    gzip "$f"
+done
+# 无 .log 文件时不执行循环体；不开 nullglob 则会尝试 gzip 字面量 "*.log"
+```
+
+### 要点
+
+- 仅 bash 可用，POSIX sh 无 `shopt`
+- 建议用完即关 `shopt -u nullglob`，避免影响后续逻辑
+
+---
+
+## command — 调用真实命令
+
+Shell 内建命令，用于**绕过函数和别名**，直接调用真实的命令。
+
+### `-v` 选项：检测命令是否存在
+
+不执行命令，返回命令的路径或定义：
+
+| 情况 | 输出 | 退出码 |
+|------|------|--------|
+| 外部命令 | `/usr/bin/fd` | 0 |
+| 内建命令 | 命令名本身 | 0 |
+| 别名/函数 | 别名/函数定义 | 0 |
+| 未找到 | 无输出 | 1 |
+
+```bash
+command -v ls       # /usr/bin/ls
+command -v cd       # cd
+command -v ll       # alias ll='ls -l'
+command -v foobar   # （无输出，退出码 1）
+```
+
+### 不带 `-v`：绕过函数/别名
+
+```bash
+# 假设定义了函数: ls() { echo "fake"; }
+ls              # 输出 fake（调用函数）
+command ls      # 输出真正的目录列表（调用 /usr/bin/ls）
+```
+
+### 典型用法
+
+```bash
+# 检测依赖是否存在（比 which 更可靠，POSIX 标准）
+command -v fd && fd --version 2>/dev/null
+```
