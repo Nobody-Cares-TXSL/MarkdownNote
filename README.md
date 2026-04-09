@@ -16,7 +16,7 @@
 | [AI_Note/](AI_Note/) | AI 工具使用笔记（Claude Code、Gemini 等） |
 | [Data_Structure_Note/](Data_Structure_Note/) | 数据结构（树、哈希等） |
 | [系统设计/](系统设计/) | 系统设计相关（RESTful API） |
-| [Markdown/](Markdown/) | Markdown 语法 |
+| [Markup/](Markup/) | Markdown、Mermaid 语法 |
 | [Lua/](Lua/) | Lua 脚本语言 |
 | [PowerShell/](PowerShell/) | PowerShell 脚本 |
 | [IMAGES/](IMAGES/) | 图片资源 |
