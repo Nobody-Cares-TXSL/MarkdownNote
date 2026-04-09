@@ -3,3 +3,6 @@ secret_replace.txt
 
 # 忽略掉 .marscode 文件夹
 /.marscode
+
+# 忽略掉 01_暂存箱 文件夹
+/01_暂存箱
