@@ -22,7 +22,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | `AI_Note/` | AI 工具使用笔记（Claude Code、Gemini 等） |
 | `Data_Structure_Note/` | 数据结构（树、哈希等） |
 | `系统设计/` | 系统设计相关（RESTful API） |
-| `Markdown/` | Markdown 语法 |
+| `Markup/` | 标记语言（Markdown、Mermaid 等） |
 | `Lua/` | Lua 脚本语言 |
 | `PowerShell/` | PowerShell 脚本 |
 | `IMAGES/` | 图片资源 |
