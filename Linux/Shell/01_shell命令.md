@@ -1,5 +1,66 @@
 # Shell 命令
 
+## #!/usr/bin/env bash — 可移植的 shebang
+
+```bash
+#!/usr/bin/env bash
+```
+
+通过 `env` 在 `$PATH` 中查找 `bash`，而非硬编码路径（如 `/bin/bash`），确保在 bash 安装于非标准路径（如 `/usr/local/bin/bash`）的系统中也能正常运行。
+
+### 与 `#!/bin/bash` 的区别
+
+| 写法 | 查找方式 | 可移植性 |
+|------|---------|---------|
+| `#!/bin/bash` | 直接指向 `/bin/bash` | 仅限 bash 装在 `/bin` 的系统 |
+| `#!/usr/bin/env bash` | 通过 `env` 在 `$PATH` 中查找 | 跨平台可移植 |
+
+### 要点
+
+- 仅在使用 bash 特性时用 `bash`；纯 POSIX 脚本应写 `#!/usr/bin/env sh`
+- 脚本文件需要执行权限才能直接运行：`chmod +x script.sh`
+
+---
+
+## set -euo pipefail — 严格模式三件套
+
+```bash
+set -euo pipefail
+```
+
+### 选项说明
+
+| 选项 | 全称 | 作用 | 示例 |
+|------|------|------|------|
+| `-e` | errexit | 任何命令失败立即退出 | `false` → 脚本终止 |
+| `-u` | nounset | 引用未定义变量时报错 | `echo $UNDEFINED` → 报错退出 |
+| `-o pipefail` | — | 管道中任一环节失败，整个管道算失败 | `false \| true` → 退出码 1 |
+
+### 各选项详解
+
+```bash
+# -e：命令失败即退出（捕获意外错误）
+set -e
+cp missing_file /tmp/    # cp 失败，脚本立即终止，不继续执行后续命令
+
+# -u：防止拼写错误导致静默产生空值
+set -u
+echo "$HOM"              # 变量名拼错，报错：HOM: unbound variable
+
+# -o pipefail：管道不再只看最后一个命令的退出码
+set -o pipefail
+grep "pattern" file.txt | sort | head -5
+# grep 没匹配到时返回 1，整个管道算失败（默认只看 head 的退出码 0）
+```
+
+### 要点
+
+- 三者组合使用，大幅提升脚本的健壮性
+- `-e` 不影响 `if`、`while` 条件中的命令，也不影响 `&&` / `||` 右侧
+- 需要容忍失败时，可用 `cmd || true` 临时抑制
+
+---
+
 ## echo — 文本输出
 > echo 会自动换行，除非使用 `-n` 选项。
 
