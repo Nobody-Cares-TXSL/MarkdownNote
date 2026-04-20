@@ -1,0 +1,99 @@
+# Pinia
+
+Vue 官方状态管理库，Vuex 的继任者。
+
+## 安装
+
+```bash
+npm install pinia
+```
+
+## 快速上手
+
+### 1. 挂载
+
+```js
+// main.js
+import { createPinia } from 'pinia'
+createApp(App).use(createPinia()).mount('#app')
+```
+
+### 2. 定义 Store（组合式）
+
+```js
+// stores/counter.js
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+
+export const useCounterStore = defineStore('counter', () => {
+  const count = ref(0)
+  const doubleCount = computed(() => count.value * 2)
+
+  function increment() { count.value++ }
+  async function fetchData() {
+    const res = await axios.get('/api/data')
+    count.value = res.data.count
+  }
+
+  return { count, doubleCount, increment, fetchData }
+})
+```
+
+### 3. 组件中使用
+
+```vue
+<script setup>
+import { useCounterStore } from '@/stores/counter'
+import { storeToRefs } from 'pinia'
+
+const store = useCounterStore()
+const { count, doubleCount } = storeToRefs(store)  // 保持响应式
+
+store.increment()       // 直接调用 action
+store.count = 10        // 直接修改 state
+</script>
+
+<template>
+  <p>{{ count }}</p>
+  <p>{{ doubleCount }}</p>
+  <button @click="store.increment()">+1</button>
+</template>
+```
+
+## State 操作
+
+```js
+const store = useCounterStore()
+
+// 读取
+store.count
+
+// 修改
+store.count = 10
+store.$patch({ count: 10, name: 'Tom' })          // 同时改多个
+store.$patch(state => state.list.push(newItem))    // 数组操作
+store.$reset()                                     // 重置（仅 Options 风格）
+```
+
+> 解构必须用 `storeToRefs()`，否则丢失响应式。Actions 直接解构即可。
+
+## Options 风格（备选）
+
+```js
+export const useCounterStore = defineStore('counter', {
+  state: () => ({ count: 0 }),
+  getters: {
+    doubleCount: state => state.count * 2,         // 接收 state
+    doublePlusOne() { return this.doubleCount + 1 }, // this 访问其他 getter
+  },
+  actions: {
+    increment() { this.count++ },                  // this 修改 state
+  },
+})
+```
+
+| 对比 | 组合式 | Options |
+|------|--------|---------|
+| 语法 | `() => { ref, computed, function }` | `{ state, getters, actions }` |
+| this | 不可用 | 可用 |
+| 适用 | 复杂逻辑、复用 composable | 简单 store |

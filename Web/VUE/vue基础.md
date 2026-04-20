@@ -33,6 +33,9 @@ npm create vite
 
 # 一步创建 Vue 项目
 npm create vite@latest my-vue-app -- --template vue
+
+# 创建 Vue 项目（交互式选择框架）
+npm create vue@latest
 ```
 
 ### 开发命令
