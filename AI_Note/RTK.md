@@ -47,7 +47,9 @@ rtk gain        # 应显示 token 节省统计
 
 > 如果 `rtk gain` 失败但 `rtk --version` 成功，说明装错了包。执行 `cargo uninstall rtk` 后重新安装。
 
-## 初始化 Claude Code Hook
+## 初始化 AI 工具 Hook
+
+### Claude Code
 
 ```bash
 rtk init -g
@@ -80,13 +82,21 @@ rtk init -g
 }
 ```
 
+### OpenCode
+
+```bash
+rtk init -g --opencode
+```
+
+安装 TypeScript 插件到 `~/.config/opencode/plugins/rtk.ts`。
+
 ### 验证 Hook
 
 ```bash
 rtk init --show
 ```
 
-全部 `[ok]` 即为成功。完成后**重启 Claude Code**。
+全部 `[ok]` 即为成功。完成后**重启对应的 AI 工具**。
 
 ## 配置
 
